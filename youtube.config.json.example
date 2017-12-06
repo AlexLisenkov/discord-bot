@@ -1,0 +1,11 @@
+{
+  "API_KEY": "Your YouTube v3 api goes here",
+  "default_stream_options": {
+    "seek": 0,
+    "volume": 0
+  },
+  "ear_rapes_enabled": true,
+  "blacklist": [
+    "aSRVZsMMxyA"
+  ]
+}
