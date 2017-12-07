@@ -4,11 +4,11 @@ const VoiceConnection = require('../ActiveConnection/VoiceConnection');
 class PlayCommand extends Command
 {
     command() {
-        return ".pause";
+        return "pause";
     }
 
-    handle(parameter, message) {
-        VoiceConnection.pause();
+    handle(parameter, message, connection) {
+        connection.pause();
     }
 }
 

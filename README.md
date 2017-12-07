@@ -2,14 +2,15 @@
 An open-source Javascript music bot for discord.
 
 ## Features
-__Commands__
-* `.play <query|url>` Add song to queue
-* `.pause` Pause current song
-* `.resume` Resume current song
-* `.skip` Skip current song
-* `.rapeme` Add an ear rape song to queue
-* `.disconnect` Disconnect bot from channel and clear queue
-* `.nickname <name>` Change nickname of the bot
+__Commands__ (prefixed with your defined prefix)
+* `help` List commands
+* `play <query|url>` Add song to queue
+* `pause` Pause current song
+* `resume` Resume current song
+* `skip` Skip current song
+* `rapeme` Add an ear rape song to queue
+* `clearqueue` Clears queue and stops playing
+* `disconnect` Disconnect bot from channel and clear queue
 
 __Blacklist__
 
@@ -33,7 +34,7 @@ __More coming soon__
 1. Install all pre requirements
 2. Clone this repository
 3. Copy config.json.example > config.json
-4. Copy config.youtube.json.example > config.youtube.json
+4. Copy youtube.config.json.example > youtube.config.json
 5. Run `npm install` to install all dependencies
 6. Make sure all your credentials are correct
 
@@ -41,7 +42,7 @@ __config.json example__
 ```javascript
 {
   "token"  : "Your Discord key goes here",
-  "prefix" : "+"
+  "prefix"  : "."
 }
 ```
 

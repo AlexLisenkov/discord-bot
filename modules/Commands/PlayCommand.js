@@ -1,32 +1,19 @@
 const Command = require('./Command');
 const YouTube = require('../YouTube/YouTube');
-const YouTubeConfig = require('../../youtube.config.json');
-const queue = require('../Queue/queue');
-const VoiceConnection = require('../ActiveConnection/VoiceConnection');
+const VoiceConnections = require('../ActiveConnection/VoiceConnections');
 
 class PlayCommand extends Command
 {
     command() {
-        return ".play";
+        return "play";
     }
 
-    handle(parameter, message) {
-        new Promise(resolve => {
-            // @todo: Dont join when already joined
-            message.member.voiceChannel.join().then( () => {
-                resolve();
-            });
-        }).then( () => {
-            YouTube.search(parameter).then(result => {
-                queue.push(result);
-                message.reply(`Queued up **${result.data.title}** on position ${queue.length}`);
-                if( !VoiceConnection.isTriggered() )
-                    VoiceConnection.play();
-            }).catch((error) => {
-                message.reply(error);
-            });
+    handle(parameter, message, connection) {
+        YouTube.search(parameter).then(result => {
+            result['author'] = message.author.username;
+            connection.push(result);
         }).catch((error) => {
-            console.log(error);
+            message.reply(error);
         });
 
     }

@@ -1,66 +1,124 @@
-const Client = require("./Client");
 const YoutubeConfig = require("../../youtube.config.json");
-const queue = require("../Queue/queue");
-
-let dispatcher = null;
-let triggered = false;
+const Config = require("../../config.json");
+const VoiceConnections = require("./VoiceConnections");
 
 class VoiceConnection
 {
-    constructor() {
-        throw "Class VoiceConnection must explicitly be called statically";
+    constructor( voiceChannel, channel ) {
+        this.voiceChannel = voiceChannel;
+        this.channel = channel;
+        this.triggered = false;
+        this._queue = [];
     }
 
-    static isTriggered() {
-        return triggered;
+    get dispatcher() {
+        return this._dispach;
+    }
+    set dispatcher( dispatcher ) {
+        this._dispach = dispatcher;
     }
 
-    static play() {
-        if( !queue.length ) {
-            return Client.instance.voiceConnections.forEach(V => {
-                V.send('Queue empty');
-            });
+    get voiceChannel() {
+        return this._voiceChannel;
+    }
+    set voiceChannel( channel ) {
+        this._voiceChannel = channel;
+    }
+
+    get channel() {
+        return this._channel;
+    }
+    set channel( channel ) {
+        this._channel = channel;
+    }
+
+    get queue() {
+        return this._queue;
+    }
+
+    get length() {
+        return this._queue.length;
+    }
+
+    set length( len ) {
+        return this._queue = len;
+    }
+
+    get triggered() {
+        return this._triggered;
+    }
+    set triggered( state ) {
+        this._triggered = state;
+    }
+
+    shift() {
+        return this.queue.shift();
+    }
+
+    push( element ) {
+        if( this.queue.length >= Config.queue_limit && Config.queue_limit > 0 )
+            return this.channel.send(`Queue limit of ${Config.queue_limit} exceeded`);
+
+        this.queue.push(element);
+        this.channel.send(`Queued up **${element.data.title}** on position ${this.length}`);
+        if( !this.triggered )
+            this.play();
+    }
+
+    play() {
+        if( this.length <= 0 ) {
+            return this.channel.send('Queue empty');
         }
 
-        const song = queue.shift();
-        Client.instance.voiceConnections.forEach(V => {
-            // @todo: show upcoming song
-            dispatcher = V.playStream(song.stream, YoutubeConfig.default_stream_options);
-            dispatcher.on('end', () => {
-                let timeout = setTimeout(() => {
-                    if (queue.length > 0) {
-                        VoiceConnection.play();
-                    } else {
-                        triggered = false;
-                        clearTimeout(timeout);
-                    }
-                }, 1000);
-            });
+        if( !this.voiceChannel.connection )
+            this.voiceChannel.join();
+
+        const song = this.shift();
+        this.channel.send(`\`\`\`markdown\n 🎶 Now playing:\n\t ${song.data.title} \n added by ${song.author}\`\`\``);
+        this.dispatcher = this.voiceChannel.connection.playStream(song.stream, YoutubeConfig.default_stream_options);
+        this.dispatcher.on('end', () => {
+            let timeout = setTimeout(() => {
+                if (this.length > 0) {
+                    this.play();
+                } else {
+                    this.triggered = false;
+                    clearTimeout(timeout);
+                }
+            }, 1000);
         });
-        triggered = true;
+        this.triggered = true;
     }
 
-    static skip() {
-        if( dispatcher.paused )
-            VoiceConnection.play();
-        dispatcher.end();
+    skip() {
+        if( this.dispatcher.paused )
+            this.play();
+        this.dispatcher.end();
     }
 
-    static pause() {
-        if( dispatcher.paused )
-            VoiceConnection.resume();
-        dispatcher.pause();
+    pause() {
+        if( this.dispatcher.paused )
+            this.resume();
+        this.dispatcher.pause();
     }
 
-    static resume() {
-        if( !dispatcher.paused )
-            VoiceConnection.pause();
-        dispatcher.resume();
+    resume() {
+        if( !this.dispatcher.paused )
+            this.pause();
+        this.dispatcher.resume();
     }
 
-    static truncate() {
-        queue.length = 0;
-        VoiceConnection.skip();
+    disconnect() {
+        this.truncate()
+        if( this.voiceChannel !== undefined && this.voiceChannel.connection !== undefined ) {
+            this.voiceChannel.connection.disconnect();
+        }
+        delete this;
+    }
+
+    truncate() {
+        this._queue = [];
+        if( this.dispatcher !== undefined )
+            this.skip();
     }
 
 }

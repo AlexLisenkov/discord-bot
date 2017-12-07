@@ -4,7 +4,7 @@ const Client = require('../ActiveConnection/Client');
 class ChangeNicknameCommand extends Command
 {
     command() {
-        return ".nickname";
+        return "nickname";
     }
 
     handle(parameter, message) {
