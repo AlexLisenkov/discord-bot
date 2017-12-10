@@ -1,6 +1,5 @@
 const YoutubeConfig = require("../../youtube.config.json");
 const Config = require("../../config.json");
-const VoiceConnections = require("./VoiceConnections");
 
 class VoiceConnection
 {
@@ -89,10 +88,37 @@ class VoiceConnection
         this.triggered = true;
     }
 
+    setVolume( volume ) {
+        if( !this.dispatcher )
+            return;
+        this.dispatcher.setVolume(volume);
+    }
+
+    mute( ) {
+        if( !this.dispatcher )
+            return;
+        this._isMuted = true;
+        this._volumeBeforeMute = this.dispatcher.volume;
+        this.dispatcher.setVolume(0);
+    }
+
+    unMute( ) {
+        if( !this.dispatcher && this._isMuted )
+            return;
+        this._isMuted = false;
+        this.dispatcher.setVolume(this._volumeBeforeMute);
+    }
+
     skip() {
         if( this.dispatcher.paused )
             this.play();
         this.dispatcher.end();
+    }
+
+    removeIndex(index) {
+        index = parseInt(index);
+        if( this._queue[index] !== undefined )
+            this._queue.splice(index, 1);
     }
 
     pause() {

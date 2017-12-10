@@ -1,0 +1,26 @@
+{
+  "clearqueue": [
+  ],
+  "disconnect": [
+  ],
+  "earrape": [
+  ],
+  "pause": [
+  ],
+  "play": [
+  ],
+  "queue": [
+  ],
+  "resume": [
+  ],
+  "skip": [
+  ],
+  "remove": [
+  ],
+  "mute": [
+  ],
+  "unmute": [
+  ],
+  "volume": [
+  ]
+}

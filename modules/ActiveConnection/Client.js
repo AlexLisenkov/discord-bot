@@ -15,7 +15,11 @@ class Client
         if( !this.intanciated ) {
             this.intanciated = true;
             this._instance = new Discord.Client();
+            this._instance.on('ready', () => {
+                this._instance.user.setGame(`${config.prefix}help for help`);
+            });
             this._instance.login(config.token);
+
         }
         return this._instance;
     }

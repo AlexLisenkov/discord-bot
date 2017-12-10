@@ -10,9 +10,8 @@ class YouTube
      * @return {boolean}
      */
     static earRapeEnabled() {
-        if( !youtube_config.ear_rapes_enabled ){
+        if( youtube_config.ear_rapes_enabled === undefined )
             return false;
-        }
         return youtube_config.ear_rapes_enabled;
     }
 
@@ -52,7 +51,7 @@ class YouTube
      * @return {string}
      */
     static get API_URL() {
-        return 'https://www.googleapis.com/youtube/v3/search';
+        return 'https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=1';
     }
 
     /**
@@ -100,23 +99,27 @@ class YouTube
      * @return {Promise}
      */
     static search( query ) {
-        const query_url = `${YouTube.API_URL}?part=snippet&q=${query}&key=${YouTube.API_KEY}`;
+        const query_url = `${YouTube.API_URL}&q=${query}&key=${YouTube.API_KEY}`;
 
         return new Promise( (then, reject) => {
             axios.get(query_url)
                 .then( response => {
-                    if(response.data.items[0].snippet.liveBroadcastContent === 'live')
+                    if( response.data.pageInfo.totalResults === 0 )
+                        return reject(`No results found for '${query}' 😔`);
+
+                    const item = response.data.items[0];
+                    if(item.snippet.liveBroadcastContent === 'live')
                         return reject('I\'m sorry, I can\'t broadcast live streams 😔');
 
-                    if(YouTube.BLACKLIST.indexOf(response.data.items[0].id.videoId) >= 0)
+                    if(YouTube.BLACKLIST.indexOf(item.id.videoId) >= 0)
                         return reject('This song is blacklisted by the owner 😔');
 
                     return then(
                         {
-                            "data": response.data.items[0].snippet,
-                            "stream": YouTube.getDataStream(response.data.items[0].id.videoId, false),
-                            "url": `${YouTube.WATCH_VIDEO_URL}${response.data.items[0].id.videoId}`,
-                            "videoId": response.data.items[0].id.videoId
+                            "data": item.snippet,
+                            "stream": YouTube.getDataStream(item.id.videoId, false),
+                            "url": `${YouTube.WATCH_VIDEO_URL}${item.id.videoId}`,
+                            "videoId": item.id.videoId
                         }
                     );
                 })

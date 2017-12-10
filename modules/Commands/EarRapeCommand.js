@@ -7,6 +7,9 @@ class EarRapeCommand extends Command
     }
 
     handle(parameter, message, connection) {
+        if( !YouTube.earRapeEnabled() )
+            return;
+
         const data = {
             "data": {
                 "title": "👌💯🔥🤷"

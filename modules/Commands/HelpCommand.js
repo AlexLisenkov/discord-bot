@@ -13,10 +13,15 @@ class StopCommand extends Command
 `
 Commands:
 **${prefix}help** *List commands*
-**${prefix}play [query|url]** *Add a song to queue*
+**${prefix}play** [query|url] *Add a song to queue*
 **${prefix}pause** *Pause current song*
 **${prefix}resume** *Resume current song*
+**${prefix}queue** *List queue*
 **${prefix}skip** *Skip current song*
+**${prefix}remove** [index] *Remove a song from the playlist (hint: say '${prefix}queue' to see indexes)*
+**${prefix}volume** [0-100] *Set the volume*
+**${prefix}mute** *Mute me*
+**${prefix}unmute** *Unmute me*
 **${prefix}rapeme** *Add an ear rape song to queue*
 **${prefix}clearqueue** *Clears queue and stops playing*
 **${prefix}disconnect** *Disconnect the bot*
