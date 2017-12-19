@@ -24,4 +24,5 @@ new HelpCommand();
 new QueueCommand();
 new MuteCommand();
 new UnmuteCommand();
+new SetVolumeCommand();
 new RemoveCommand();

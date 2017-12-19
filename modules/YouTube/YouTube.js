@@ -51,7 +51,16 @@ class YouTube
      * @return {string}
      */
     static get API_URL() {
-        return 'https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=1';
+        return `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video,playlist&maxResults=1&key=${YouTube.API_KEY}`;
+    }
+
+    /**
+     * Get the YouTube playlist API uri
+     *
+     * @return {string}
+     */
+    static get PLAYLIST_URL() {
+        return `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&key=${YouTube.API_KEY}`;
     }
 
     /**
@@ -99,7 +108,7 @@ class YouTube
      * @return {Promise}
      */
     static search( query ) {
-        const query_url = `${YouTube.API_URL}&q=${query}&key=${YouTube.API_KEY}`;
+        const query_url = `${YouTube.API_URL}&q=${query}`;
 
         return new Promise( (then, reject) => {
             axios.get(query_url)
@@ -114,14 +123,32 @@ class YouTube
                     if(YouTube.BLACKLIST.indexOf(item.id.videoId) >= 0)
                         return reject('This song is blacklisted by the owner 😔');
 
-                    return then(
-                        {
-                            "data": item.snippet,
-                            "stream": YouTube.getDataStream(item.id.videoId, false),
-                            "url": `${YouTube.WATCH_VIDEO_URL}${item.id.videoId}`,
-                            "videoId": item.id.videoId
-                        }
-                    );
+                    if( item.id.kind === 'youtube#video' )
+                        return then(
+                            {
+                                "data": item.snippet,
+                                "url": `${YouTube.WATCH_VIDEO_URL}${item.id.videoId}`,
+                                "videoId": item.id.videoId
+                            }
+                        );
+
+                    const url = `${YouTube.PLAYLIST_URL}&playlistId=${item.id.playlistId}`;
+                    return axios.get(url)
+                        .then( response => {
+                            const videoItems = response.data.items;
+                            const videos = [];
+                             for ( let i = 0; i < videoItems.length; i++ ){
+                                 const video = videoItems[i];
+                                 videos.push({
+                                     "data": video.snippet,
+                                     "url": `${YouTube.WATCH_VIDEO_URL}${video.snippet.resourceId.videoId}`,
+                                     "videoId": video.snippet.resourceId.videoId
+                                 });
+                             }
+                             return then(videos);
+                        }).catch( e => {
+                            return console.error(e);
+                        });
                 })
                 .catch(function (error) {
                     throw error;

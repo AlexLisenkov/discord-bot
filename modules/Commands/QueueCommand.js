@@ -1,5 +1,4 @@
 const Command = require('./Command');
-const VoiceConnection = require('../ActiveConnection/VoiceConnection');
 
 class PlayCommand extends Command
 {
@@ -15,6 +14,10 @@ class PlayCommand extends Command
 
         for ( let i = 0; i < connection.length; i++){
             reply += `[${i+1}]: ${connection.queue[i].data.title}\n`;
+            if( i >= 9 ) {
+                reply += `\n Showing ${i+1} of ${connection.length} total`;
+                break;
+            }
         }
 
         reply += "\n```";

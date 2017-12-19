@@ -12,6 +12,6 @@
     "debug": "~2.6.9",
     "discord.js": "^11.2.1",
     "opusscript": "0.0.4",
-    "ytdl-core": "^0.18.3"
+    "ytdl-core": "^0.18.4"
   }
 }

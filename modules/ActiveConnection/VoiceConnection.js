@@ -1,4 +1,5 @@
 const YoutubeConfig = require("../../youtube.config.json");
+const YouTube = require("../YouTube/YouTube");
 const Config = require("../../config.json");
 
 class VoiceConnection
@@ -54,12 +55,13 @@ class VoiceConnection
         return this.queue.shift();
     }
 
-    push( element ) {
+    push( element, replyPosition = true ) {
         if( this.queue.length >= Config.queue_limit && Config.queue_limit > 0 )
             return this.channel.send(`Queue limit of ${Config.queue_limit} exceeded`);
 
         this.queue.push(element);
-        this.channel.send(`Queued up **${element.data.title}** on position ${this.length}`);
+        if( replyPosition )
+            this.channel.send(`Queued up **${element.data.title}** on position ${this.length}`);
         if( !this.triggered )
             this.play();
     }
@@ -73,12 +75,25 @@ class VoiceConnection
             this.voiceChannel.join();
 
         const song = this.shift();
+        let stream;
+        if( song.stream )
+            stream = song.stream;
+        else
+            stream = YouTube.getDataStream(song.videoId, false);
+
+        this.loadNextSongStream();
+
         this.channel.send(`\`\`\`markdown\n 🎶 Now playing:\n\t ${song.data.title} \n added by ${song.author}\`\`\``);
-        this.dispatcher = this.voiceChannel.connection.playStream(song.stream, YoutubeConfig.default_stream_options);
+
+        this.dispatcher = this.voiceChannel.connection.playStream(
+            stream,
+            YoutubeConfig.default_stream_options
+        );
+
         this.dispatcher.on('end', () => {
             let timeout = setTimeout(() => {
                 if (this.length > 0) {
-                    this.play();
+                    this.play()
                 } else {
                     this.triggered = false;
                     clearTimeout(timeout);
@@ -145,6 +160,12 @@ class VoiceConnection
         this._queue = [];
         if( this.dispatcher !== undefined )
             this.skip();
+    }
+
+    loadNextSongStream() {
+        if( this.length < 1 )
+            return;
+        this._queue[0]['stream'] = YouTube.getDataStream(this._queue[0].videoId, false);
     }
 
 }

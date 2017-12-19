@@ -1,6 +1,5 @@
 const Command = require('./Command');
 const YouTube = require('../YouTube/YouTube');
-const VoiceConnections = require('../ActiveConnection/VoiceConnections');
 
 class PlayCommand extends Command
 {
@@ -10,10 +9,19 @@ class PlayCommand extends Command
 
     handle(parameter, message, connection) {
         YouTube.search(parameter).then(result => {
-            result['author'] = message.author.username;
-            connection.push(result);
+            if( typeof result.data != 'undefined' ){
+                result['author'] = message.author.username;
+                connection.push(result);
+            } else {
+                connection.channel.send(`Loaded ${result.length} songs from playlist`);
+                for (let i = 0; i < result.length; i++) {
+                    result[i]['author'] = message.author.username;
+                    connection.push(result[i], false);
+                }
+            }
         }).catch((error) => {
-            message.reply(error);
+            message.reply(`Something went wrong`);
+            console.error(error);
         });
 
     }
