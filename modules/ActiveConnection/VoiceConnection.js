@@ -101,6 +101,7 @@ class VoiceConnection
             }, 1000);
         });
         this.triggered = true;
+        this.dispatcher.on('error', console.error );
     }
 
     setVolume( volume ) {
@@ -149,7 +150,7 @@ class VoiceConnection
     }
 
     disconnect() {
-        this.truncate()
+        this.truncate();
         if( this.voiceChannel !== undefined && this.voiceChannel.connection !== undefined ) {
             this.voiceChannel.connection.disconnect();
         }
