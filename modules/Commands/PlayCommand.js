@@ -20,8 +20,7 @@ class PlayCommand extends Command
                 }
             }
         }).catch((error) => {
-            message.reply(`Something went wrong`);
-            console.error(error);
+            message.reply(error);
         });
 
     }
