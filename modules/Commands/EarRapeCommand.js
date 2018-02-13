@@ -1,5 +1,7 @@
 const Command = require('./Command');
 const YouTube = require('../YouTube/YouTube');
+
+// @depricated
 class EarRapeCommand extends Command
 {
     command() {

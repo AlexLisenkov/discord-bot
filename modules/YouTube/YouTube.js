@@ -1,4 +1,5 @@
 const youtube_config = require("../../youtube.config.json");
+const Song = require("./Song");
 const axios = require("axios");
 const ytdl = require('ytdl-core');
 
@@ -52,6 +53,25 @@ class YouTube
      */
     static get API_URL() {
         return `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video,playlist&maxResults=1&key=${YouTube.API_KEY}`;
+    }
+
+    /**
+     * Get the YouTube videos API uri
+     *
+     * @return {string}
+     */
+    static get SONG_INFO_URL() {
+        return `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&key=${YouTube.API_KEY}`;
+    }
+
+    /**
+     * Get the YouTube videos API uri
+     *
+     * @param {string} id
+     * @return {Promise}
+     */
+    static getSongInfo( id ) {
+        return axios.get( YouTube.SONG_INFO_URL + '&id=' + id);
     }
 
     /**
@@ -125,12 +145,9 @@ class YouTube
 
                     if( item.id.kind === 'youtube#video' )
                         return then(
-                            {
-                                "data": item.snippet,
-                                "url": `${YouTube.WATCH_VIDEO_URL}${item.id.videoId}`,
-                                "videoId": item.id.videoId
-                            }
+                            new Song(item)
                         );
+
 
                     const url = `${YouTube.PLAYLIST_URL}&playlistId=${item.id.playlistId}`;
                     return axios.get(url)
@@ -139,11 +156,7 @@ class YouTube
                             const videos = [];
                              for ( let i = 0; i < videoItems.length; i++ ){
                                  const video = videoItems[i];
-                                 videos.push({
-                                     "data": video.snippet,
-                                     "url": `${YouTube.WATCH_VIDEO_URL}${video.snippet.resourceId.videoId}`,
-                                     "videoId": video.snippet.resourceId.videoId
-                                 });
+                                 videos.push(new Song(video));
                              }
                              return then(videos);
                         }).catch( e => {
@@ -151,7 +164,7 @@ class YouTube
                         });
                 })
                 .catch(function (error) {
-                    throw error;
+                    return console.error(error);
                 });
         });
     }

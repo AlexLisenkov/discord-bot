@@ -9,6 +9,7 @@ __Commands__ (prefixed with your defined prefix)
 * `resume` Resume current song
 * `queue` List queue
 * `skip` Skip current song
+* `np` Show the song that is currenty playing
 * `remove <index>` Remove a song from the playlist (index can be found in queue)
 * `volume <0-100>` Set the volume
 * `mute` Mute the bot

@@ -1,19 +1,19 @@
 const Command = require('./Command');
 
-class RemoveCommand extends Command
+class NowPlayingCommand extends Command
 {
     command() {
-        return "remove";
+        return "np";
     }
 
     handle(parameter, message, connection) {
-        const index = parseInt(parameter)-1;
-        const song = connection.queue[index];
-        connection.removeIndex(index);
 
-        const reply =
+        if( !connection.currentSong )
+            return message.reply('`I\'m not playing anything`');
+
+        const song = connection.currentSong;
+        const embed =
             {
-                color: 0xf45342,
                 title: song.snippet.title,
                 url: song.url,
                 description: song.snippet.channelTitle,
@@ -21,16 +21,15 @@ class RemoveCommand extends Command
                     "url": song.snippet.thumbnails.default.url
                 },
                 author: {
-                    'name': '❌ Song removed from queue',
+                    'name': '🎶 Now playing',
                     'url': 'https://discord.gg',
                 },
                 footer: {
-                    'text': `Removed by ${message.author.username}`
+                    'text': `Added by ${song.author.username}`
                 }
             };
-
-        connection.channel.send('', {embed: reply});
+        return connection.channel.send('', {embed: embed})
     }
 }
 
-module.exports = RemoveCommand;
+module.exports = NowPlayingCommand;

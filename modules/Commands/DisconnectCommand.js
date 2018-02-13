@@ -1,6 +1,4 @@
 const Command = require('./Command');
-const Client = require('../ActiveConnection/Client');
-const VoiceConnections = require('../ActiveConnection/VoiceConnection');
 
 class PlayCommand extends Command
 {

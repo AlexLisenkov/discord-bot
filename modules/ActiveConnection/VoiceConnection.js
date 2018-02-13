@@ -1,6 +1,7 @@
 const YoutubeConfig = require("../../youtube.config.json");
 const YouTube = require("../YouTube/YouTube");
 const Config = require("../../config.json");
+const Song = require('../YouTube/Song');
 
 class VoiceConnection
 {
@@ -16,6 +17,13 @@ class VoiceConnection
     }
     set dispatcher( dispatcher ) {
         this._dispach = dispatcher;
+    }
+
+    get currentSong() {
+        return this._currentSong;
+    }
+    set currentSong( song ) {
+        this._currentSong = song;
     }
 
     get voiceChannel() {
@@ -56,12 +64,15 @@ class VoiceConnection
     }
 
     push( element, replyPosition = true ) {
+        if( !element instanceof Song)
+            return this.channel.send(`Oops.. an error occured (Song instance failed)`);
+
         if( this.queue.length >= Config.queue_limit && Config.queue_limit > 0 )
             return this.channel.send(`Queue limit of ${Config.queue_limit} exceeded`);
 
         this.queue.push(element);
         if( replyPosition )
-            this.channel.send(`Queued up **${element.data.title}** on position ${this.length}`);
+            this.channel.send(`Queued up **${element.snippet.title}** on position ${this.length}`);
         if( !this.triggered )
             this.play();
     }
@@ -75,23 +86,49 @@ class VoiceConnection
             this.voiceChannel.join();
 
         const song = this.shift();
+
+        if( !song instanceof Song)
+            return this.play();
+
+        // The steam is buffered at this location because of require problems with YouTube in Song
+        // Problems are most likely to be caused by circular dependencies
         let stream;
         if( song.stream )
             stream = song.stream;
         else
-            stream = YouTube.getDataStream(song.videoId, false);
+            stream = YouTube.getDataStream(song.youtubeId, false);
 
         this.loadNextSongStream();
 
-        this.channel.send(`\`\`\`markdown\n 🎶 Now playing:\n\t ${song.data.title} \n added by ${song.author}\`\`\``);
+        const embed =
+            {
+                title: song.snippet.title,
+                url: song.url,
+                description: song.snippet.channelTitle,
+                thumbnail: {
+                    "url": song.snippet.thumbnails.default.url
+                },
+                author: {
+                    'name': '🎶 Now playing',
+                    'url': 'https://discord.gg',
+                },
+                footer: {
+                    'text': `Added by ${song.author.username}`
+                }
+            };
+
+        this.channel.send('', {embed, embed});
 
         this.dispatcher = this.voiceChannel.connection.playStream(
             stream,
             YoutubeConfig.default_stream_options
         );
 
+        this.currentSong = song;
+
         this.dispatcher.on('end', () => {
             let timeout = setTimeout(() => {
+                this.currentSong = null;
                 if (this.length > 0) {
                     this.play()
                 } else {
@@ -111,7 +148,7 @@ class VoiceConnection
     }
 
     mute( ) {
-        if( !this.dispatcher )
+        if( !this.dispatcher && !this._isMuted )
             return;
         this._isMuted = true;
         this._volumeBeforeMute = this.dispatcher.volume;
@@ -122,6 +159,7 @@ class VoiceConnection
         if( !this.dispatcher && this._isMuted )
             return;
         this._isMuted = false;
+        this._volumeBeforeMute = (this._volumeBeforeMute ? this._volumeBeforeMute : YoutubeConfig.default_stream_options.volume)
         this.dispatcher.setVolume(this._volumeBeforeMute);
     }
 
@@ -166,7 +204,7 @@ class VoiceConnection
     loadNextSongStream() {
         if( this.length < 1 )
             return;
-        this._queue[0]['stream'] = YouTube.getDataStream(this._queue[0].videoId, false);
+        this._queue[0].stream = YouTube.getDataStream(this._queue[0].youtubeId, false);
     }
 
 }

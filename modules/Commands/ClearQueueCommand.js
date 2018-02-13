@@ -8,6 +8,8 @@ class ClearQueueCommand extends Command
 
     handle(parameter, message, connection) {
         connection.truncate();
+
+        connection.channel.send('`Queue cleared`');
     }
 }
 
