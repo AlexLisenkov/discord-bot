@@ -1,5 +1,5 @@
 # Discord Music Bot
-An open-source Javascript music bot for discord.
+An open-source TypeScript music bot for discord that runs on Node.
 
 ## Features
 __Commands__ (prefixed with your defined prefix)
@@ -14,72 +14,15 @@ __Commands__ (prefixed with your defined prefix)
 * `volume <0-100>` Set the volume
 * `mute` Mute the bot
 * `unmute` Unmute the bot
-* `rapeme` Add an ear rape song to queue
 * `clearqueue` Clears queue and stops playing
 * `disconnect` Disconnect bot from channel and clear queue
 
-__Roles and permissions__
-
-You may define roles in the `permissions.json` file.
-Roles are assigned to each command, when there are no roles present to a command everyone may execute it.
-It is possible to assign multiple roles to one command.
-
-Example of the `permissions.json` file:
-```javascript
-{
-  "play": [
-      
-  ],
-  "disconnect": [
-      "Admin"
-  ]
-  "skip": [
-      "DJ"
-      "Admin"
-  ],
-}
-```
-In this example `play` is executable for everyone, 
-`disconnect` only for Admin role and
-`skip` for both DJ and Admin
-
-Please note: All commands that are undefined will be executable for everone.
-
-__Blacklist__
-
-```javascript
-
-  "blacklist": [
-      "any-youtube-id",
-      "other-youtube-id"
-    ]
-
-```
-
-Ability to add a YouTube songId to in the `youtube.config.json` file.
-
-Please note: You cannot blacklist ear rape songs
-
-__Ear rapes__
-
-Enable disable ear rape command in the `youtube.config.json` file.
-```javascript
-
-  "ear_rapes_enabled": true, // or false
-
-```
-
-__This bot does not (yet) support__
-..
-* YouTube playlists
-* YouTube live streams
-
 ## Pre requirements
 
-* A discord bot (you'll need the key)
-* A YouTube v3 api key
-* Node (6 or higher, latest version recommended)
-* ffmpeg
+* [A discord bot](https://discordapp.com/developers/applications/me)
+* [A YouTube v3 api key](https://developers.google.com/youtube/v3/getting-started)
+* [Node.js](https://nodejs.org) (6 or higher, latest version recommended)
+* [ffmpeg](https://www.ffmpeg.org/) (latest)
 
 ## Installation
 1. Install all pre requirements
@@ -93,7 +36,8 @@ __config.json example__
 ```javascript
 {
   "token"  : "Your Discord key goes here",
-  "prefix"  : "."
+  "prefix"  : ".",
+  "queue_limit" : 50 // -1 for no limit
 }
 ```
 
@@ -104,42 +48,17 @@ __config.youtube.json example__
   "default_stream_options": {
     "seek": 0,
     "volume": 1
-  },
-  "ear_rapes_enabled": true,
-  "blacklist": [
-  ]
-}
-```
-
-__permissions.json example__
-```javascript
-{
-  "clearqueue": [
-  ],
-  "disconnect": [
-  ],
-  "earrape": [
-  ],
-  "pause": [
-  ],
-  "play": [
-  ],
-  "queue": [
-  ],
-  "resume": [
-  ],
-  "skip": [
-  ],
-  "remove": [
-  ],
-  "mute": [
-  ],
-  "unmute": [
-  ],
-  "volume": [
-  ]
+  }
 }
 ```
 
 ## Run the bot
-1. Run `node ./app.js` in the installation directory
+1. Run `npm start` in the installation directory
+
+### Todo:
+
+* Customizable settings between guilds
+* Roles and permissions
+* YouTube blacklist
+* Ability to load over 50 playlist songs
+* YouTube live streams

@@ -1,8 +1,8 @@
 {
   "name": "discord-bot",
-  "version": "0.1",
+  "version": "0.3",
   "description": "A fully javascript based discord music bot that runs on node",
-  "main": "./app.js",
+  "main": "./dist/app.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/AlexLisenkov/discord-bot.git"
@@ -17,16 +17,20 @@
   "author": "AlexLisenkov",
   "license": "GPL-3.0",
   "scripts": {
-    "start": "node ./app.js"
+    "start": "node ./dist/app.js"
   },
   "dependencies": {
     "axios": "^0.17.1",
     "discord.js": "^11.3.0",
     "ffmpeg-binaries": "^3.2.2-3",
+    "gulp": "^3.9.1",
     "node-opus": "^0.2.7",
     "ytdl-core": "^0.20.1"
   },
   "engines": {
     "node": ">=6.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^2.7.1"
   }
 }

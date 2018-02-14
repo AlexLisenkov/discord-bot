@@ -1,0 +1,1 @@
+{"version":3,"file":"ChangeNicknameCommand.js","sourceRoot":"","sources":["ChangeNicknameCommand.ts"],"names":[],"mappings":";;AACA,uDAAgD;AAEhD,uCAAgC;AAEhC,2BAA4B,SAAQ,iBAAO;IAA3C;;QAEW,YAAO,GAAU,UAAU,CAAC;IAKvC,CAAC;IAHU,MAAM,CAAC,SAAgB,EAAE,OAAe,EAAE,UAA0B;QACvE,gBAAM,CAAC,QAAQ,CAAC,IAAI,CAAC,WAAW,CAAC,SAAS,CAAC,CAAC;IAChD,CAAC;CACJ;AAED,IAAI,qBAAqB,EAAE,CAAC"}
