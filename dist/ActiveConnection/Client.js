@@ -22,7 +22,13 @@ class Client {
             const channels = value.channels.array();
             for (let i = 0; i < channels.length; i++) {
                 const channel = channels[i];
-                if (channel instanceof discord_js_1.TextChannel) {
+                if (!(channel instanceof discord_js_1.TextChannel))
+                    continue;
+                if (channel.permissionsFor(Client.instance.user)._member === null) {
+                    channel.send(message);
+                    break;
+                }
+                else if (channel.permissionsFor(Client.instance.user).has('SEND_MESSAGES')) {
                     channel.send(message);
                     break;
                 }
@@ -35,8 +41,16 @@ class Client {
             for (let i = 0; i < channels.length; i++) {
                 const channel = channels[i];
                 if (channel instanceof discord_js_1.TextChannel) {
-                    channel.send('', { embed: embed });
-                    break;
+                    if (!(channel instanceof discord_js_1.TextChannel))
+                        continue;
+                    if (channel.permissionsFor(Client.instance.user)._member === null) {
+                        channel.send('', { embed: embed });
+                        break;
+                    }
+                    else if (channel.permissionsFor(Client.instance.user).has('SEND_MESSAGES')) {
+                        channel.send('', { embed: embed });
+                        break;
+                    }
                 }
             }
         });

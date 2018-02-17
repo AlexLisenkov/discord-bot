@@ -9,11 +9,12 @@ export default abstract class Command
     constructor() {
         Client.instance.on("message", (message:Message) => {
             if(message.author.bot) return;
-            if( this.adminOnly && !message.member.hasPermission('ADMINISTRATOR') ){
-                message.reply('You do not have the correct permission to run this command');
-                return;
-            }
             if (message.content.startsWith(Config.prefix+this.command)) {
+
+                if( this.adminOnly && !message.member.hasPermission('ADMINISTRATOR') ){
+                    message.reply('You do not have the correct permission to run this command');
+                    return;
+                }
 
                 const connect = VoiceConnections.getOrCreate(message);
 

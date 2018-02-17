@@ -26,10 +26,19 @@ export default class Client
             const channels = value.channels.array();
             for( let i = 0; i < channels.length; i++ ){
                 const channel = <GuildChannel> channels[i];
-                if( channel instanceof TextChannel){
+
+                if( !(channel instanceof TextChannel) )
+                    continue;
+
+                if( (<any>channel.permissionsFor(Client.instance.user))._member === null ) {
                     (<TextChannel>channel).send(message);
                     break;
                 }
+                else if( (<any>channel.permissionsFor(Client.instance.user)).has('SEND_MESSAGES') ){
+                    (<TextChannel>channel).send(message);
+                    break;
+                }
+
             }
         });
     }
@@ -40,8 +49,17 @@ export default class Client
             for( let i = 0; i < channels.length; i++ ){
                 const channel = <GuildChannel> channels[i];
                 if( channel instanceof TextChannel){
-                    (<TextChannel>channel).send('', {embed: embed});
-                    break;
+                    if( !(channel instanceof TextChannel) )
+                        continue;
+
+                    if( (<any>channel.permissionsFor(Client.instance.user))._member === null ) {
+                        (<TextChannel>channel).send('', {embed: embed});
+                        break;
+                    }
+                    else if( (<any>channel.permissionsFor(Client.instance.user)).has('SEND_MESSAGES') ){
+                        (<TextChannel>channel).send('', {embed: embed});
+                        break;
+                    }
                 }
             }
         });

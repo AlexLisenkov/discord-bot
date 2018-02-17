@@ -12,7 +12,6 @@ import ResumeCommand from "./Commands/ResumeCommand";
 import StopCommand from "./Commands/StopCommand";
 import UnmuteCommand from "./Commands/UnmuteCommand";
 import Client from "./ActiveConnection/Client";
-import {DMChannel, User} from "discord.js";
 import HTTPServer from "./OpenConnection/HTTPServer";
 import AddToBlacklistCommand from "./Commands/AddToBlacklistCommand";
 import RemoveFromBlacklistCommand from "./Commands/RemoveFromBlacklistCommand";
