@@ -1,7 +1,8 @@
 import Config from "../Config/Config";
 import YoutubeConfig from "../Config/YoutubeConfig";
 import Song from "../YouTube/Song";
-import {TextChannel, StreamDispatcher, VoiceChannel, DMChannel, GroupDMChannel} from "discord.js";
+import {TextChannel, StreamDispatcher, VoiceChannel, DMChannel, GroupDMChannel, Snowflake} from "discord.js";
+import Guild from "../Database/Guild";
 
 export default class VoiceConnection
 {
@@ -13,10 +14,12 @@ export default class VoiceConnection
     public volumeBeforeMute:number;
     public triggered:boolean = false;
     public isMuted:boolean = false;
+    public database:Guild;
 
-    constructor( voiceChannel:VoiceChannel, channel:TextChannel|DMChannel|GroupDMChannel ) {
+    constructor( voiceChannel:VoiceChannel, channel:TextChannel|DMChannel|GroupDMChannel, guildId:Snowflake ) {
         this.voiceChannel = voiceChannel;
         this.channel = channel;
+        this.database = new Guild(guildId);
     }
 
     play():any {
@@ -100,7 +103,7 @@ export default class VoiceConnection
 
     skip():void {
         if( this.dispatcher.paused )
-            this.play();
+            this.resume();
         this.dispatcher.end();
     }
 
@@ -152,12 +155,19 @@ export default class VoiceConnection
             return false;
         }
 
-        this.queue.push(element);
-        if( replyPosition )
-            this.channel.send(`Queued up **${element.snippet.title}** on position ${this.queue.length}`);
-        if( !this.triggered )
-            this.play();
-        return true;
+        this.database.blacklist.data.orderByValue().equalTo(element.youtubeId).once('value').then( (row) => {
+            if( row.val() !== null ){
+                this.channel.send(`The song '${element.snippet.title}' is blacklisted by the owner 😔`);
+                return false;
+            } else {
+                this.queue.push(element);
+                if( replyPosition )
+                    this.channel.send(`Queued up **${element.snippet.title}** on position ${this.queue.length}`);
+                if( !this.triggered )
+                    this.play();
+                return true;
+            }
+        });
     }
 
 }

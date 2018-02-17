@@ -1,5 +1,6 @@
 import {User} from "discord.js";
 import YouTube from "./YouTube";
+import {Readable} from "stream";
 
 export default class Song
 {
@@ -7,7 +8,7 @@ export default class Song
     public item:any = {};
     public snippet:any = {};
     public author:User;
-    private _stream:ReadableStream;
+    private _stream:Readable;
 
     /**
      * Construct a new Song
@@ -41,9 +42,9 @@ export default class Song
     /**
      * Get the YouTube watch url
      *
-     * @return {string}
+     * @return {Readable}
      */
-    get stream():ReadableStream {
+    get stream():Readable {
         if( this._stream == undefined )
             this._stream = YouTube.getDataStream(this.youtubeId);
         return this._stream

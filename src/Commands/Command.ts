@@ -9,19 +9,11 @@ export default abstract class Command
     constructor() {
         Client.instance.on("message", (message:Message) => {
             if(message.author.bot) return;
+            if( this.adminOnly && !message.member.hasPermission('ADMINISTRATOR') ){
+                message.reply('You do not have the correct permission to run this command');
+                return;
+            }
             if (message.content.startsWith(Config.prefix+this.command)) {
-
-/*                if( permissions[this.command()] !== undefined && permissions[this.command()].length > 0 ){
-                    let permit = false;
-                    message.member.roles.forEach( (V, K) => {
-                        if( permissions[this.command()].indexOf(V.name) !== -1 )
-                            permit = true;
-                    });
-
-                    if( !permit )
-                        return message.reply('I\'m sorry, you don\'t have the right role to execute this command');
-                }*/
-
 
                 const connect = VoiceConnections.getOrCreate(message);
 
@@ -34,6 +26,7 @@ export default abstract class Command
         });
     }
 
+    public adminOnly:boolean = false;
     public abstract command:string;
 
     public abstract handle(parameter:string, message:Message, connection:VoiceConnection): void

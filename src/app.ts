@@ -12,7 +12,23 @@ import ResumeCommand from "./Commands/ResumeCommand";
 import StopCommand from "./Commands/StopCommand";
 import UnmuteCommand from "./Commands/UnmuteCommand";
 import Client from "./ActiveConnection/Client";
+import {DMChannel, User} from "discord.js";
+import HTTPServer from "./OpenConnection/HTTPServer";
+import AddToBlacklistCommand from "./Commands/AddToBlacklistCommand";
+import RemoveFromBlacklistCommand from "./Commands/RemoveFromBlacklistCommand";
+import ShowBlacklistCommand from "./Commands/ShowBlacklistCommand";
+
+// Create instance
 Client.instance;
+
+// Log uncaught exceptions
+process.on('uncaughtException', (err) => {
+    if( HTTPServer.server )
+        HTTPServer.server.close();
+    console.error(err);
+});
+
+// Register commands
 new PlayCommand();
 new ClearQueueCommand();
 new DisconnectCommand();
@@ -26,3 +42,13 @@ new ResumeCommand();
 new SetVolumeCommand();
 new StopCommand();
 new UnmuteCommand();
+new AddToBlacklistCommand();
+new RemoveFromBlacklistCommand();
+new ShowBlacklistCommand();
+
+// HTTP server
+HTTPServer.instance;
+process.on('exit', () => {
+    Client.sendMessageToAllGuilds('Goodbye @everyone');
+    HTTPServer.server.close();
+});

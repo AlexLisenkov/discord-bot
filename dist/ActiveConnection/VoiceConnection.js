@@ -2,13 +2,15 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const Config_1 = require("../Config/Config");
 const YoutubeConfig_1 = require("../Config/YoutubeConfig");
+const Guild_1 = require("../Database/Guild");
 class VoiceConnection {
-    constructor(voiceChannel, channel) {
+    constructor(voiceChannel, channel, guildId) {
         this.queue = [];
         this.triggered = false;
         this.isMuted = false;
         this.voiceChannel = voiceChannel;
         this.channel = channel;
+        this.database = new Guild_1.default(guildId);
     }
     play() {
         if (this.queue.length <= 0) {
@@ -74,7 +76,7 @@ class VoiceConnection {
     }
     skip() {
         if (this.dispatcher.paused)
-            this.play();
+            this.resume();
         this.dispatcher.end();
     }
     removeIndex(index) {
@@ -118,12 +120,20 @@ class VoiceConnection {
             this.channel.send(`Queue limit of ${Config_1.default.queue_limit} exceeded`);
             return false;
         }
-        this.queue.push(element);
-        if (replyPosition)
-            this.channel.send(`Queued up **${element.snippet.title}** on position ${this.queue.length}`);
-        if (!this.triggered)
-            this.play();
-        return true;
+        this.database.blacklist.data.orderByValue().equalTo(element.youtubeId).once('value').then((row) => {
+            if (row.val() !== null) {
+                this.channel.send(`The song '${element.snippet.title}' is blacklisted by the owner 😔`);
+                return false;
+            }
+            else {
+                this.queue.push(element);
+                if (replyPosition)
+                    this.channel.send(`Queued up **${element.snippet.title}** on position ${this.queue.length}`);
+                if (!this.triggered)
+                    this.play();
+                return true;
+            }
+        });
     }
 }
 exports.default = VoiceConnection;

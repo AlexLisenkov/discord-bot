@@ -1,5 +1,6 @@
 import VoiceConnection from './VoiceConnection';
 import {Message} from "discord.js";
+import value from "*.json";
 
 export default class VoiceConnections
 {
@@ -12,14 +13,18 @@ export default class VoiceConnections
                 if( message.member.voiceChannel === undefined )
                     err('You got to be in a voice channel to summon me');
 
-                VoiceConnections.guilds[guildId] = new VoiceConnection(message.member.voiceChannel, message.channel);
+                VoiceConnections.guilds[guildId] = new VoiceConnection(message.member.voiceChannel, message.channel, guildId);
             }
             then( VoiceConnections.guilds[guildId]);
         } );
     }
 
-    static remove( guildId ){
+    public static remove( guildId ){
         if( guildId in VoiceConnections.guilds )
             delete VoiceConnections.guilds[guildId];
+    }
+
+    public static getGuilds(){
+        return this.guilds;
     }
 }

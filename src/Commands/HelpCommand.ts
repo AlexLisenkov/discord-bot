@@ -31,6 +31,9 @@ export default class HelpCommand extends Command
 **${prefix}unmute** *Unmute me*
 **${prefix}clearqueue** *Clears queue and stops playing*
 **${prefix}disconnect** *Disconnect the bot*
+**${prefix}blacklist show** *Lists blacklisted YouTube ids*
+**${prefix}blacklist add [YouTube-url]** *Adds a YouTube video to the blacklist (admin-only)*
+**${prefix}blacklist remove [YouTube-id]** *Removes a YouTube video from the blacklist (admin-only)*
 `
             };
         connection.channel.send('', {embed: reply});

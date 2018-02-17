@@ -16,6 +16,11 @@ __Commands__ (prefixed with your defined prefix)
 * `unmute` Unmute the bot
 * `clearqueue` Clears queue and stops playing
 * `disconnect` Disconnect bot from channel and clear queue
+* `blacklist show` Lists blacklisted YouTube ids
+
+Admin commands:
+* `blacklist add <YouTube-url>` Adds a YouTube video to the blacklist
+* `blacklist remove <YouTube-id>` Removes a YouTube video from the blacklist
 
 ## Pre requirements
 
@@ -23,6 +28,7 @@ __Commands__ (prefixed with your defined prefix)
 * [A YouTube v3 api key](https://developers.google.com/youtube/v3/getting-started)
 * [Node.js](https://nodejs.org) (6 or higher, latest version recommended)
 * [ffmpeg](https://www.ffmpeg.org/) (latest)
+* [Firebase](https://console.firebase.google.com/u/0/) (just the database)
 
 ## Installation
 1. Install all pre requirements
@@ -35,9 +41,18 @@ __Commands__ (prefixed with your defined prefix)
 __config.json example__
 ```javascript
 {
-  "token"  : "Your Discord key goes here",
-  "prefix"  : ".",
-  "queue_limit" : 50 // -1 for no limit
+  "secret"  : "Your secret", // This password is used for the http
+  "http_port"  : 8000, (8000 by default)
+  "token"  : "Discord api token",
+  "prefix" : ".",
+  "queue_limit" : 50, // -1 for unlimited
+  "firebase": {
+    "apiKey": "",
+    "authDomain": "",
+    "databaseURL": "",
+    "projectId": "",
+    "storageBucket": ""
+  }
 }
 ```
 
@@ -59,6 +74,5 @@ __config.youtube.json example__
 
 * Customizable settings between guilds
 * Roles and permissions
-* YouTube blacklist
 * Ability to load over 50 playlist songs
 * YouTube live streams

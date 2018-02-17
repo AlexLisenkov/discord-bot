@@ -2,6 +2,7 @@ import YoutubeConfig from "../Config/YoutubeConfig";
 import Song from "./Song";
 import axios from "axios";
 import * as ytdl from 'ytdl-core';
+import {Readable} from "stream";
 
 export default class YouTube
 {
@@ -69,9 +70,6 @@ export default class YouTube
                     if(item.snippet.liveBroadcastContent === 'live')
                         return reject('I\'m sorry, I can\'t broadcast live streams 😔');
 
-                    if(YouTube.isBlacklisted(item.id.videoId))
-                        return reject('This song is blacklisted by the owner 😔');
-
                     if( item.id.kind === 'youtube#video' )
                         return then(
                             new Song(item)
@@ -98,8 +96,13 @@ export default class YouTube
         });
     }
 
+    /**
+     * @deprecated
+     * @param {string} videoId
+     * @return {boolean}
+     */
     static isBlacklisted( videoId:string ) {
-        return (<any>YoutubeConfig.blacklist).indexOf(videoId) >= 0;
+        return false;
     }
 
     /**
@@ -107,8 +110,8 @@ export default class YouTube
      *
      * @return {ReadableStream}
      */
-    static getDataStream( videoId ):ReadableStream {
-        return ytdl(`${YouTube.WATCH_VIDEO_URL}${videoId}`, {filter: 'audioonly'});
+    static getDataStream( videoId ):Readable {
+        return ytdl(`${YouTube.WATCH_VIDEO_URL}${videoId}--`, {filter: 'audioonly'});
     }
 
     constructor() {

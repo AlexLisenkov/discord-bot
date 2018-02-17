@@ -61,8 +61,6 @@ class YouTube {
                 const item = response.data.items[0];
                 if (item.snippet.liveBroadcastContent === 'live')
                     return reject('I\'m sorry, I can\'t broadcast live streams 😔');
-                if (YouTube.isBlacklisted(item.id.videoId))
-                    return reject('This song is blacklisted by the owner 😔');
                 if (item.id.kind === 'youtube#video')
                     return then(new Song_1.default(item));
                 const url = `${YouTube.PLAYLIST_URL}&playlistId=${item.id.playlistId}`;
@@ -84,8 +82,13 @@ class YouTube {
             });
         });
     }
+    /**
+     * @deprecated
+     * @param {string} videoId
+     * @return {boolean}
+     */
     static isBlacklisted(videoId) {
-        return YoutubeConfig_1.default.blacklist.indexOf(videoId) >= 0;
+        return false;
     }
     /**
      * Get data stream from YouTube videoId
@@ -93,7 +96,7 @@ class YouTube {
      * @return {ReadableStream}
      */
     static getDataStream(videoId) {
-        return ytdl(`${YouTube.WATCH_VIDEO_URL}${videoId}`, { filter: 'audioonly' });
+        return ytdl(`${YouTube.WATCH_VIDEO_URL}${videoId}--`, { filter: 'audioonly' });
     }
     constructor() {
         throw "Class YouTube must explicitly be called statically";

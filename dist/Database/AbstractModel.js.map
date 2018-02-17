@@ -1,0 +1,1 @@
+{"version":3,"file":"AbstractModel.js","sourceRoot":"","sources":["../../src/Database/AbstractModel.ts"],"names":[],"mappings":";;AAAA,yCAAkC;AAIlC;IAKI,YAAmB,UAA4B;QAC3C,IAAI,CAAC,UAAU,GAAG,UAAU,CAAC;IACjC,CAAC;IAED,IAAI,IAAI;QACJ,MAAM,CAAC,kBAAQ,CAAC,QAAQ,CAAC,GAAG,CAAC,GAAG,IAAI,CAAC,GAAG,IAAI,IAAI,CAAC,UAAU,EAAE,CAAC,CAAC;IACnE,CAAC;CACJ;AAZD,gCAYC"}

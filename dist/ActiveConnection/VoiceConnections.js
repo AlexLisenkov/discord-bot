@@ -8,7 +8,7 @@ class VoiceConnections {
             if (!(guildId in VoiceConnections.guilds)) {
                 if (message.member.voiceChannel === undefined)
                     err('You got to be in a voice channel to summon me');
-                VoiceConnections.guilds[guildId] = new VoiceConnection_1.default(message.member.voiceChannel, message.channel);
+                VoiceConnections.guilds[guildId] = new VoiceConnection_1.default(message.member.voiceChannel, message.channel, guildId);
             }
             then(VoiceConnections.guilds[guildId]);
         });
@@ -16,6 +16,9 @@ class VoiceConnections {
     static remove(guildId) {
         if (guildId in VoiceConnections.guilds)
             delete VoiceConnections.guilds[guildId];
+    }
+    static getGuilds() {
+        return this.guilds;
     }
 }
 VoiceConnections.guilds = [];

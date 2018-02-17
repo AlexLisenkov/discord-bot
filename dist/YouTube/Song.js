@@ -34,7 +34,7 @@ class Song {
     /**
      * Get the YouTube watch url
      *
-     * @return {string}
+     * @return {Readable}
      */
     get stream() {
         if (this._stream == undefined)

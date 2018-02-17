@@ -1,6 +1,6 @@
 {
   "name": "discord-bot",
-  "version": "0.3",
+  "version": "0.3.0",
   "description": "A fully javascript based discord music bot that runs on node",
   "main": "./dist/app.js",
   "repository": {
@@ -20,9 +20,11 @@
     "start": "node ./dist/app.js"
   },
   "dependencies": {
+    "@types/node": "^9.4.6",
     "axios": "^0.17.1",
     "discord.js": "^11.3.0",
     "ffmpeg-binaries": "^3.2.2-3",
+    "firebase": "^4.10.0",
     "gulp": "^3.9.1",
     "node-opus": "^0.2.7",
     "ytdl-core": "^0.20.1"
