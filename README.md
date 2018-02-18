@@ -1,3 +1,5 @@
+[![Known Vulnerabilities](https://snyk.io/test/github/AlexLisenkov/discord-bot/badge.svg)](https://snyk.io/test/github/AlexLisenkov/discord-bot)
+
 # Discord Music Bot
 An open-source TypeScript music bot for discord that runs on Node.
 
