@@ -22,7 +22,7 @@ class QueueCommand extends Command_1.default {
         };
         for (let i = 0; i < connection.queue.length; i++) {
             reply.description += `**[${i + 1}]**: ${connection.queue[i].snippet.title}\n`;
-            if (i >= 24) {
+            if (i >= 19) {
                 reply.description += `\n Showing ${i + 1} of ${connection.queue.length} total`;
                 break;
             }
@@ -30,7 +30,6 @@ class QueueCommand extends Command_1.default {
         connection.channel.send('', { embed: reply }).then((msg) => {
             msg.delete(30000);
         });
-        ;
     }
 }
 exports.default = QueueCommand;

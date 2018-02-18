@@ -1,4 +1,15 @@
 {
-  "token"  : "Your Discord Key goes here",
-  "prefix" : "+"
+  "secret"  : "secret",
+  "http_port"  : 8000,
+  "message_lifetime"  : 30000,
+  "token"  : "",
+  "prefix" : ":",
+  "queue_limit" : -1,
+  "firebase": {
+    "apiKey": "",
+    "authDomain": "",
+    "databaseURL": "",
+    "projectId": "",
+    "storageBucket": ""
+  }
 }

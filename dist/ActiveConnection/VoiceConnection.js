@@ -2,6 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const Config_1 = require("../Config/Config");
 const YoutubeConfig_1 = require("../Config/YoutubeConfig");
+const Song_1 = require("../YouTube/Song");
+const discord_js_1 = require("discord.js");
 const Guild_1 = require("../Database/Guild");
 class VoiceConnection {
     constructor(message) {
@@ -11,6 +13,27 @@ class VoiceConnection {
         this.disconnectAfter = 1000 * 60 * 2;
         this.database = new Guild_1.default(message.guild.id);
         this.channel = message.channel;
+        this.database.djRole.data.on('value', value => {
+            this.djRole = value.val();
+        });
+        this.database.djCommands.data.on('value', value => {
+            let collect = new discord_js_1.Collection();
+            for (let x in value.val())
+                collect.set(x, value.val()[x]);
+            this.djCommands = collect;
+        });
+        this.database.blacklist.data.on('value', value => {
+            let collect = new discord_js_1.Collection();
+            for (let x in value.val())
+                collect.set(x, value.val()[x]);
+            this.blacklist = collect;
+        });
+        this.database.disallowedVoiceChannels.data.on('value', value => {
+            let collect = new discord_js_1.Collection();
+            for (let x in value.val())
+                collect.set(x, value.val()[x]);
+            this.disallowedVoiceChannels = collect;
+        });
         this.disconnectWhenChannelIsEmpty();
     }
     play() {
@@ -127,28 +150,22 @@ class VoiceConnection {
             this.channel.send(`Queue limit of ${Config_1.default.queue_limit} exceeded`).then((msg) => {
                 msg.delete(Config_1.default.message_lifetime);
             });
-            ;
             return false;
         }
-        this.database.blacklist.data.orderByValue().equalTo(element.youtubeId).once('value').then((row) => {
-            if (row.val() !== null) {
-                this.channel.send(`The song '${element.snippet.title}' is blacklisted by the owner 😔`).then((msg) => {
-                    msg.delete(Config_1.default.message_lifetime);
-                });
-                ;
-                return false;
-            }
-            else {
-                this.queue.push(element);
-                if (replyPosition)
-                    this.channel.send(`Queued up **${element.snippet.title}** on position ${this.queue.length}`).then((msg) => {
-                        msg.delete(Config_1.default.message_lifetime);
-                    });
-                if (!this.triggered)
-                    this.play();
-                return true;
-            }
-        });
+        if (this.songIsBlacklisted(element.youtubeId)) {
+            this.channel.send(`❌ The song '${element.snippet.title}' is blacklisted`).then((msg) => {
+                msg.delete(Config_1.default.message_lifetime);
+            });
+            return false;
+        }
+        this.queue.push(element);
+        if (replyPosition)
+            this.channel.send(`Queued up **${element.snippet.title}** on position ${this.queue.length}`).then((msg) => {
+                msg.delete(Config_1.default.message_lifetime);
+            });
+        if (!this.triggered)
+            this.play();
+        return true;
     }
     disconnectWhenChannelIsEmpty() {
         setTimeout(() => {
@@ -160,6 +177,20 @@ class VoiceConnection {
     }
     timeToDisconnect() {
         return !(!this.voiceChannel || !this.voiceChannel.connection || (this.voiceChannel.members.size > 1 && this.triggered));
+    }
+    seekCurrentSong(time) {
+        if (!this.currentSong)
+            return null;
+        const song = new Song_1.default(this.currentSong.item);
+        song.begin = time;
+        song.author = this.currentSong.author;
+        this.queue.unshift(song);
+        this.skip();
+    }
+    songIsBlacklisted(youtubeId) {
+        return this.blacklist.find((el) => {
+            return el == youtubeId;
+        }) != null;
     }
 }
 exports.default = VoiceConnection;

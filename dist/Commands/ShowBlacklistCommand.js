@@ -21,7 +21,6 @@ class ShowBlacklistCommand extends Command_1.default {
             connection.channel.send('', { embed: reply }).then((msg) => {
                 msg.delete(60000);
             });
-            ;
         });
     }
 }

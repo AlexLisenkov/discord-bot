@@ -64,11 +64,11 @@ export default class YouTube
             axios.get(query_url)
                 .then( response => {
                     if( response.data.pageInfo.totalResults === 0 )
-                        return reject(`No results found for '${query}' 😔`);
+                        return reject(`❌ No results found for '${query}'`);
 
                     const item = response.data.items[0];
                     if(item.snippet.liveBroadcastContent === 'live')
-                        return reject('I\'m sorry, I can\'t broadcast live streams 😔');
+                        return reject('❌ I\'m sorry, I can\'t broadcast live streams');
 
                     if( item.id.kind === 'youtube#video' )
                         return then(
@@ -110,8 +110,8 @@ export default class YouTube
      *
      * @return {ReadableStream}
      */
-    static getDataStream( videoId ):Readable {
-        return ytdl(`${YouTube.WATCH_VIDEO_URL}${videoId}--`, {filter: 'audioonly'});
+    static getDataStream( videoId:string, begin:string = '0s' ):Readable {
+        return ytdl(`${YouTube.WATCH_VIDEO_URL}${videoId}&t=${begin}`, {filter: 'audioonly'});
     }
 
     constructor() {

@@ -25,7 +25,7 @@ export default class ShowBlacklistCommand extends Command
                 reply.description += `\n- [${row.val()[x]}](https://youtube.com/watch?v=${row.val()[x]})`;
             connection.channel.send('', {embed: reply}).then( (msg: Message) => {
                 msg.delete(60000);
-            });;
+            });
         });
     }
 }

@@ -8,6 +8,7 @@ export default class Song
     public item:any = {};
     public snippet:any = {};
     public author:User;
+    public begin:string = '00:00:00.000';
     private _stream:Readable;
 
     /**
@@ -46,7 +47,7 @@ export default class Song
      */
     get stream():Readable {
         if( this._stream == undefined )
-            this._stream = YouTube.getDataStream(this.youtubeId);
+            this._stream = YouTube.getDataStream(this.youtubeId, this.begin);
         return this._stream
     }
 

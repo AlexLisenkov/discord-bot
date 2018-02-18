@@ -57,10 +57,10 @@ class YouTube {
             axios_1.default.get(query_url)
                 .then(response => {
                 if (response.data.pageInfo.totalResults === 0)
-                    return reject(`No results found for '${query}' 😔`);
+                    return reject(`❌ No results found for '${query}'`);
                 const item = response.data.items[0];
                 if (item.snippet.liveBroadcastContent === 'live')
-                    return reject('I\'m sorry, I can\'t broadcast live streams 😔');
+                    return reject('❌ I\'m sorry, I can\'t broadcast live streams');
                 if (item.id.kind === 'youtube#video')
                     return then(new Song_1.default(item));
                 const url = `${YouTube.PLAYLIST_URL}&playlistId=${item.id.playlistId}`;
@@ -95,8 +95,8 @@ class YouTube {
      *
      * @return {ReadableStream}
      */
-    static getDataStream(videoId) {
-        return ytdl(`${YouTube.WATCH_VIDEO_URL}${videoId}--`, { filter: 'audioonly' });
+    static getDataStream(videoId, begin = '0s') {
+        return ytdl(`${YouTube.WATCH_VIDEO_URL}${videoId}&t=${begin}`, { filter: 'audioonly' });
     }
     constructor() {
         throw "Class YouTube must explicitly be called statically";

@@ -11,6 +11,7 @@ class Song {
         this.createdAt = new Date();
         this.item = {};
         this.snippet = {};
+        this.begin = '00:00:00.000';
         this.item = item;
         this.snippet = item.snippet;
         this.author = null;
@@ -38,7 +39,7 @@ class Song {
      */
     get stream() {
         if (this._stream == undefined)
-            this._stream = YouTube_1.default.getDataStream(this.youtubeId);
+            this._stream = YouTube_1.default.getDataStream(this.youtubeId, this.begin);
         return this._stream;
     }
     buffer() {

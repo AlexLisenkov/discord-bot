@@ -1,9 +1,15 @@
 # Discord Music Bot
 An open-source TypeScript music bot for discord that runs on Node.
 
+Next to listening to music you also can:
+* Manage the **channels the bot can't join**
+* Fully manageable **roles and permissions**
+* Ability to **blacklist songs**
+
 ## Features
 __Commands__ (prefixed with your defined prefix)
 * `help` List commands
+* `join` Joins a channel
 * `play <query|url>` Add song to queue
 * `pause` Pause current song
 * `resume` Resume current song
@@ -24,6 +30,13 @@ Admin commands:
 * `blacklist remove <YouTube-id>` Removes a YouTube video from the blacklist
 * `voicechannel disallow <channel-nae>` Blocks the bot from joining a channel
 * `voicechannel allow <channel-nae>` Removes the the channel from the blacklist
+* `dj role <role>` Set the DJ role
+* `dj require <command>` Set a command to DJ-only *(help command is always public)*
+* `dj remove <command>` Remove DJ-only from a command
+
+Note:
+* Administrators can always run every command
+* Admin commands can only be ran by administrators. When you give admin-only commands DJ-only, DJ's are also able to run this command.
 
 ## Pre requirements
 
@@ -76,7 +89,7 @@ __config.youtube.json example__
 
 ### Todo:
 
-* Customizable settings between guilds
-* Roles and permissions
 * Ability to load over 50 playlist songs
 * YouTube live streams
+* Confirmation when search result is playlist
+* Seek command, to seek to a time in the song

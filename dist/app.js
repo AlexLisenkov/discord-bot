@@ -21,6 +21,10 @@ const ShowBlacklistCommand_1 = require("./Commands/ShowBlacklistCommand");
 const DisallowVoiceChannelsCommand_1 = require("./Commands/DisallowVoiceChannelsCommand");
 const RemoveDisallowVoiceChannelsCommand_1 = require("./Commands/RemoveDisallowVoiceChannelsCommand");
 const ShowDisallowedVoiceChannelsCommand_1 = require("./Commands/ShowDisallowedVoiceChannelsCommand");
+const SetDJRoleCommand_1 = require("./Commands/SetDJRoleCommand");
+const SetDJCommandCommand_1 = require("./Commands/SetDJCommandCommand");
+const RemoveDJCommandCommand_1 = require("./Commands/RemoveDJCommandCommand");
+const JoinCommand_1 = require("./Commands/JoinCommand");
 // Create instance
 Client_1.default.instance;
 // Log uncaught exceptions
@@ -49,6 +53,10 @@ new ShowBlacklistCommand_1.default();
 new DisallowVoiceChannelsCommand_1.default();
 new RemoveDisallowVoiceChannelsCommand_1.default();
 new ShowDisallowedVoiceChannelsCommand_1.default();
+new SetDJRoleCommand_1.default();
+new SetDJCommandCommand_1.default();
+new RemoveDJCommandCommand_1.default();
+new JoinCommand_1.default();
 // HTTP server
 HTTPServer_1.default.instance;
 process.on('exit', () => {

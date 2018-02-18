@@ -11,73 +11,77 @@ class Command {
             if (message.author.bot)
                 return;
             if (message.content.startsWith(Config_1.default.prefix + this.command)) {
-                if (this.adminOnly && !message.member.hasPermission('ADMINISTRATOR')) {
-                    message.reply('You do not have the correct permission to run this command').then((msg) => {
-                        msg.delete(Config_1.default.message_lifetime);
-                    });
-                    return;
-                }
                 const connect = VoiceConnections_1.default.getOrCreate(message);
                 connect.then((connection) => {
-                    if (!this.requiresVoiceChannel || (this.requiresVoiceChannel && connection.voiceChannel !== undefined)) {
-                        this.handle(message.content.replace(Config_1.default.prefix + this.command, '').trim(), message, connection);
-                        return true;
-                    }
-                    Command.setVoiceChannel(message, connection).then((res) => {
-                        if (res)
-                            this.handle(message.content.replace(Config_1.default.prefix + this.command, '').trim(), message, connection);
-                    });
+                    if (message.member.hasPermission('ADMINISTRATOR'))
+                        return this.prepareHandle(message, connection);
+                    if (!this.requiresDJRole(connection) && !this.adminOnly)
+                        return this.prepareHandle(message, connection);
+                    if (this.requiresDJRole(connection) && message.member.roles.exists('id', connection.djRole))
+                        return this.prepareHandle(message, connection);
+                    if (!this.requiresDJRole(connection) && this.adminOnly)
+                        message.reply(`This command is for administrators only`).then((msg) => {
+                            msg.delete(Config_1.default.message_lifetime);
+                        });
+                    else
+                        message.reply(`You need the DJ role to do this`).then((msg) => {
+                            msg.delete(Config_1.default.message_lifetime);
+                        });
                 }).catch(err => {
                     message.reply(err);
                 });
             }
         });
     }
-    static setVoiceChannel(message, connection) {
-        if (connection.voiceChannel !== undefined)
-            return new Promise((then) => {
-                return then(true);
-            });
+    prepareHandle(message, connection) {
+        if (!this.requiresVoiceChannel || (this.requiresVoiceChannel && connection.voiceChannel !== undefined)) {
+            this.handle(message.content.replace(Config_1.default.prefix + this.command, '').trim(), message, connection);
+            return null;
+        }
+        if (Command.setVoiceChannel(message, connection))
+            this.handle(message.content.replace(Config_1.default.prefix + this.command, '').trim(), message, connection);
+    }
+    requiresDJRole(connection) {
+        return (connection.djCommands[this.command] !== undefined && connection.djCommands[this.command] === true);
+    }
+    static setVoiceChannel(message, connection, checkIfJoined = true) {
+        if (checkIfJoined && connection.voiceChannel !== undefined)
+            return true;
         if (message.member.voiceChannel === undefined) {
             message.reply('You must be in a voice channel to summon me')
                 .then((msg) => {
                 msg.delete(Config_1.default.message_lifetime);
             });
-            return new Promise((then) => {
-                return then(false);
-            });
+            return false;
         }
         if (!message.member.voiceChannel.joinable) {
             message.reply('I am not allowed to join this channel')
                 .then((msg) => {
                 msg.delete(Config_1.default.message_lifetime);
             });
-            return new Promise((then) => {
-                return then(false);
-            });
+            return false;
         }
         if (!message.member.voiceChannel.speakable) {
             message.reply('I am not able to play songs in this channel')
                 .then((msg) => {
                 msg.delete(Config_1.default.message_lifetime);
             });
-            return new Promise((then) => {
-                return then(false);
-            });
+            return false;
         }
-        return connection.database.disallowedVoiceChannels.data.orderByValue().equalTo(message.member.voiceChannel.id).once('value').then((row) => {
-            if (row.val() !== null) {
-                message.reply(`I am not allowed to join this channel`).then((msg) => {
-                    msg.delete(Config_1.default.message_lifetime);
-                });
-                return false;
-            }
-            else {
-                connection.voiceChannel = message.member.voiceChannel;
-                connection.voiceChannel.join();
-                return true;
-            }
+        const match = connection.disallowedVoiceChannels.find(el => {
+            return el == message.member.voiceChannel.id;
         });
+        if (match != null) {
+            message.reply(`I am not allowed to join this channel`).then((msg) => {
+                msg.delete(Config_1.default.message_lifetime);
+            });
+            return false;
+        }
+        else {
+            connection.voiceChannel = message.member.voiceChannel;
+            connection.voiceChannel.join();
+            return true;
+        }
     }
 }
 exports.default = Command;

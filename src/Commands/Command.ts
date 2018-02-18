@@ -1,6 +1,6 @@
 import Client from "../ActiveConnection/Client";
 import VoiceConnections from "../ActiveConnection/VoiceConnections";
-import {Message} from "discord.js";
+import {GuildMember, Message, User} from "discord.js";
 import VoiceConnection from "../ActiveConnection/VoiceConnection";
 import Config from "../Config/Config";
 
@@ -10,26 +10,26 @@ export default abstract class Command
         Client.instance.on("message", (message:Message) => {
             if(message.author.bot) return;
             if (message.content.startsWith(Config.prefix+this.command)) {
-
-                if( this.adminOnly && !message.member.hasPermission('ADMINISTRATOR') ){
-                    message.reply('You do not have the correct permission to run this command').then( (msg: Message) => {
-                        msg.delete(Config.message_lifetime);
-                    });
-                    return;
-                }
-
                 const connect = VoiceConnections.getOrCreate(message);
 
                 connect.then( (connection:VoiceConnection) => {
-                    if( !this.requiresVoiceChannel || (this.requiresVoiceChannel && connection.voiceChannel !== undefined)){
-                        this.handle(message.content.replace(Config.prefix+this.command, '').trim(), message, connection);
-                        return true;
-                    }
-                    Command.setVoiceChannel(message, connection).then( (res:boolean) => {
-                        if( res )
-                            this.handle(message.content.replace(Config.prefix+this.command, '').trim(), message, connection);
-                    });
+                    if( message.member.hasPermission('ADMINISTRATOR') )
+                        return this.prepareHandle(message, connection);
 
+                    if( !this.requiresDJRole(connection) && !this.adminOnly )
+                        return this.prepareHandle(message, connection);
+
+                    if( this.requiresDJRole(connection) && message.member.roles.exists('id', connection.djRole) )
+                        return this.prepareHandle(message, connection);
+
+                    if( !this.requiresDJRole(connection) && this.adminOnly )
+                        message.reply(`This command is for administrators only`).then((msg: Message) => {
+                            msg.delete(Config.message_lifetime);
+                        });
+                    else
+                        message.reply(`You need the DJ role to do this`).then((msg: Message) => {
+                            msg.delete(Config.message_lifetime);
+                        });
                 }).catch( err => {
                     message.reply(err);
                 } );
@@ -37,20 +37,29 @@ export default abstract class Command
         });
     }
 
-    public static setVoiceChannel(message:Message, connection:VoiceConnection):Promise<boolean> {
-        if( connection.voiceChannel !== undefined )
-            return new Promise<boolean>( (then) => {
-                return then(true);
-            } );
+    public prepareHandle(message:Message, connection:VoiceConnection):void {
+        if( !this.requiresVoiceChannel || (this.requiresVoiceChannel && connection.voiceChannel !== undefined)){
+            this.handle(message.content.replace(Config.prefix+this.command, '').trim(), message, connection);
+            return null;
+        }
+        if( Command.setVoiceChannel(message, connection) )
+             this.handle(message.content.replace(Config.prefix+this.command, '').trim(), message, connection);
+    }
+
+    public requiresDJRole(connection:VoiceConnection):boolean {
+         return (connection.djCommands[this.command] !== undefined && connection.djCommands[this.command] === true);
+    }
+
+    public static setVoiceChannel(message:Message, connection:VoiceConnection, checkIfJoined:boolean = true):boolean {
+        if( checkIfJoined && connection.voiceChannel !== undefined )
+            return true;
 
         if( message.member.voiceChannel === undefined) {
             message.reply('You must be in a voice channel to summon me')
                 .then( (msg: Message) => {
                     msg.delete(Config.message_lifetime);
                 });
-            return new Promise<boolean>( (then) => {
-                return then(false);
-            } );
+            return false;
         }
 
         if( !message.member.voiceChannel.joinable ){
@@ -58,9 +67,7 @@ export default abstract class Command
                 .then( (msg: Message) => {
                     msg.delete(Config.message_lifetime);
                 });
-            return new Promise<boolean>( (then) => {
-                return then(false);
-            } );
+            return false;
         }
 
         if( !message.member.voiceChannel.speakable ){
@@ -68,23 +75,23 @@ export default abstract class Command
                 .then( (msg: Message) => {
                     msg.delete(Config.message_lifetime);
                 });
-            return new Promise<boolean>( (then) => {
-                return then(false);
-            } );
+            return false;
         }
 
-        return connection.database.disallowedVoiceChannels.data.orderByValue().equalTo(message.member.voiceChannel.id).once('value').then( (row: firebase.database.DataSnapshot) => {
-            if (row.val() !== null) {
-                message.reply(`I am not allowed to join this channel`).then((msg: Message) => {
-                    msg.delete(Config.message_lifetime);
-                });
-                return false;
-            } else {
-                connection.voiceChannel = message.member.voiceChannel;
-                connection.voiceChannel.join();
-                return true;
-            }
+        const match = connection.disallowedVoiceChannels.find( el => {
+            return el == message.member.voiceChannel.id;
         });
+
+        if( match != null ){
+            message.reply(`I am not allowed to join this channel`).then((msg: Message) => {
+                msg.delete(Config.message_lifetime);
+            });
+            return false;
+        } else {
+            connection.voiceChannel = message.member.voiceChannel;
+            connection.voiceChannel.join();
+            return true;
+        }
     }
 
     public adminOnly:boolean = false;

@@ -1,7 +1,10 @@
 import Config from "../Config/Config";
 import YoutubeConfig from "../Config/YoutubeConfig";
 import Song from "../YouTube/Song";
-import {TextChannel, StreamDispatcher, VoiceChannel, DMChannel, GroupDMChannel, Snowflake, Message} from "discord.js";
+import {
+    TextChannel, StreamDispatcher, VoiceChannel, DMChannel, GroupDMChannel, Snowflake, Message,
+    Collection
+} from "discord.js";
 import Guild from "../Database/Guild";
 
 export default class VoiceConnection
@@ -15,11 +18,37 @@ export default class VoiceConnection
     public triggered:boolean = false;
     public isMuted:boolean = false;
     public database:Guild;
+    public djRole:string;
+    public djCommands:Collection<string, string>;
+    public blacklist:Collection<string, string>;
+    public disallowedVoiceChannels:Collection<string, string>;
     protected disconnectAfter:number = 1000*60*2;
 
     constructor( message:Message ) {
         this.database = new Guild(message.guild.id);
         this.channel = message.channel;
+
+        this.database.djRole.data.on('value', value => {
+            this.djRole = value.val();
+        });
+        this.database.djCommands.data.on('value', value => {
+            let collect = <Collection<string, string>> new Collection();
+            for( let x in value.val() )
+                collect.set(x, value.val()[x]);
+            this.djCommands = collect;
+        });
+        this.database.blacklist.data.on('value', value => {
+            let collect = <Collection<string, string>> new Collection();
+            for( let x in value.val() )
+                collect.set(x, value.val()[x]);
+            this.blacklist = collect;
+        });
+        this.database.disallowedVoiceChannels.data.on('value', value => {
+            let collect = <Collection<string, string>> new Collection();
+            for( let x in value.val() )
+                collect.set(x, value.val()[x]);
+            this.disallowedVoiceChannels = collect;
+        });
 
         this.disconnectWhenChannelIsEmpty();
     }
@@ -159,27 +188,25 @@ export default class VoiceConnection
         if( this.queue.length >= Config.queue_limit && Config.queue_limit > 0 ){
             this.channel.send(`Queue limit of ${Config.queue_limit} exceeded`).then( (msg: Message) => {
                 msg.delete(Config.message_lifetime);
-            });;
+            });
             return false;
         }
 
-        this.database.blacklist.data.orderByValue().equalTo(element.youtubeId).once('value').then( (row) => {
-            if( row.val() !== null ){
-                this.channel.send(`The song '${element.snippet.title}' is blacklisted by the owner 😔`).then( (msg: Message) => {
-                    msg.delete(Config.message_lifetime);
-                });;
-                return false;
-            } else {
-                this.queue.push(element);
-                if( replyPosition )
-                    this.channel.send(`Queued up **${element.snippet.title}** on position ${this.queue.length}`).then( (msg: Message) => {
-                        msg.delete(Config.message_lifetime);
-                    });
-                if( !this.triggered )
-                    this.play();
-                return true;
-            }
-        });
+        if( this.songIsBlacklisted(element.youtubeId) ){
+            this.channel.send(`❌ The song '${element.snippet.title}' is blacklisted`).then( (msg: Message) => {
+                msg.delete(Config.message_lifetime);
+            });
+            return false;
+        }
+
+        this.queue.push(element);
+        if( replyPosition )
+            this.channel.send(`Queued up **${element.snippet.title}** on position ${this.queue.length}`).then( (msg: Message) => {
+                msg.delete(Config.message_lifetime);
+            });
+        if( !this.triggered )
+            this.play();
+        return true;
     }
 
     disconnectWhenChannelIsEmpty():void {
@@ -194,6 +221,22 @@ export default class VoiceConnection
 
     timeToDisconnect():boolean {
         return !( !this.voiceChannel || !this.voiceChannel.connection || (this.voiceChannel.members.size > 1 && this.triggered) );
+    }
+
+    seekCurrentSong( time:string ):void {
+        if( !this.currentSong )
+            return null;
+        const song = new Song(this.currentSong.item);
+        song.begin = time;
+        song.author = this.currentSong.author;
+        this.queue.unshift(song);
+        this.skip();
+    }
+
+    songIsBlacklisted( youtubeId:string ):boolean {
+        return this.blacklist.find((el) => {
+            return el == youtubeId;
+        }) != null;
     }
 
 }

@@ -19,6 +19,10 @@ import ShowBlacklistCommand from "./Commands/ShowBlacklistCommand";
 import DisallowVoiceChannelsCommand from "./Commands/DisallowVoiceChannelsCommand";
 import RemoveDisallowVoiceChannelsCommand from "./Commands/RemoveDisallowVoiceChannelsCommand";
 import ShowDisallowedVoiceChannelsCommand from "./Commands/ShowDisallowedVoiceChannelsCommand";
+import SetDJRoleCommand from "./Commands/SetDJRoleCommand";
+import SetDJCommandCommand from "./Commands/SetDJCommandCommand";
+import RemoveDJCommandCommand from "./Commands/RemoveDJCommandCommand";
+import JoinCommand from "./Commands/JoinCommand";
 
 // Create instance
 Client.instance;
@@ -50,6 +54,10 @@ new ShowBlacklistCommand();
 new DisallowVoiceChannelsCommand();
 new RemoveDisallowVoiceChannelsCommand();
 new ShowDisallowedVoiceChannelsCommand();
+new SetDJRoleCommand();
+new SetDJCommandCommand();
+new RemoveDJCommandCommand();
+new JoinCommand();
 
 // HTTP server
 HTTPServer.instance;

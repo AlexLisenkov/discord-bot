@@ -35,7 +35,6 @@ class SetVolumeCommand extends Command_1.default {
         connection.channel.send(reply).then((msg) => {
             msg.delete(Config_1.default.message_lifetime);
         });
-        ;
     }
 }
 exports.default = SetVolumeCommand;
