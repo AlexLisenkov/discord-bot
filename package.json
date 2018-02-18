@@ -17,7 +17,9 @@
   "author": "AlexLisenkov",
   "license": "GPL-3.0",
   "scripts": {
-    "start": "node ./dist/app.js"
+    "start": "node ./dist/app.js",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "dependencies": {
     "@types/node": "^9.4.6",
@@ -25,14 +27,16 @@
     "discord.js": "^11.3.0",
     "ffmpeg-binaries": "^3.2.2-3",
     "firebase": "^4.10.0",
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.0",
     "node-opus": "^0.2.7",
-    "ytdl-core": "^0.20.1"
+    "ytdl-core": "^0.20.1",
+    "snyk": "^1.69.7"
   },
   "engines": {
     "node": ">=6.0.0"
   },
   "devDependencies": {
     "typescript": "^2.7.1"
-  }
+  },
+  "snyk": true
 }
