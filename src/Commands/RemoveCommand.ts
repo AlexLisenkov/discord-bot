@@ -1,6 +1,7 @@
 import Command from "./Command";
 import {Message} from "discord.js";
 import VoiceConnection from "../ActiveConnection/VoiceConnection";
+import Config from "../Config/Config";
 
 export default class RemoveCommand extends Command
 {
@@ -29,6 +30,8 @@ export default class RemoveCommand extends Command
                 }
             };
 
-        connection.channel.send('', {embed: reply});
+        connection.channel.send('', {embed: reply}).then( (msg: Message) => {
+            msg.delete(Config.message_lifetime);
+        });;
     }
 }

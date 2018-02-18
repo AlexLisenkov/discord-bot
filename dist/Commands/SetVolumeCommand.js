@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Command_1 = require("./Command");
+const Config_1 = require("../Config/Config");
 class SetVolumeCommand extends Command_1.default {
     constructor() {
         super(...arguments);
@@ -31,7 +32,10 @@ class SetVolumeCommand extends Command_1.default {
             emoji = '🔈';
         reply += `\n${emoji} ${progress} ${volume * 10}%`;
         reply += '```';
-        connection.channel.send(reply);
+        connection.channel.send(reply).then((msg) => {
+            msg.delete(Config_1.default.message_lifetime);
+        });
+        ;
     }
 }
 exports.default = SetVolumeCommand;

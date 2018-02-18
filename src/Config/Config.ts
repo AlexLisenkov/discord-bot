@@ -9,4 +9,5 @@ export default abstract class Config
     public static http_port:number = (<any>configFile).http_port ? (<any>configFile).http_port : 8000;
     public static queue_limit:number = (<any>configFile).queue_limit;
     public static firebase:object = (<any>configFile).firebase;
+    public static message_lifetime:number = (<any>configFile).message_lifetime;
 }

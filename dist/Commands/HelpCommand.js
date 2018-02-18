@@ -34,7 +34,10 @@ class HelpCommand extends Command_1.default {
 **${prefix}blacklist remove [YouTube-id]** *Removes a YouTube video from the blacklist (admin-only)*
 `
         };
-        connection.channel.send('', { embed: reply });
+        connection.channel.send('', { embed: reply }).then((msg) => {
+            msg.delete(60000);
+        });
+        ;
     }
 }
 exports.default = HelpCommand;

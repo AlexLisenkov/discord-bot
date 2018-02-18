@@ -1,6 +1,7 @@
 import Command from "./Command";
 import VoiceConnection from "../ActiveConnection/VoiceConnection";
 import {Message} from "discord.js";
+import Config from "../Config/Config";
 
 export default class NowPlayingCommand extends Command
 {
@@ -8,7 +9,9 @@ export default class NowPlayingCommand extends Command
 
     handle(parameter: string, message: Message, connection: VoiceConnection): void {
         if( !connection.currentSong ){
-            message.reply('`I\'m not playing anything`');
+            message.reply('`I\'m not playing anything`').then( (msg: Message) => {
+                msg.delete(Config.message_lifetime);
+            });;
             return null;
         }
 
@@ -29,6 +32,8 @@ export default class NowPlayingCommand extends Command
                     'text': `Added by ${song.author.username}`
                 }
             };
-        connection.channel.send('', {embed: embed})
+        connection.channel.send('', {embed: embed}).then( (msg: Message) => {
+            msg.delete(Config.message_lifetime);
+        });
     }
 }

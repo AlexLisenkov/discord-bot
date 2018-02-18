@@ -16,6 +16,9 @@ import HTTPServer from "./OpenConnection/HTTPServer";
 import AddToBlacklistCommand from "./Commands/AddToBlacklistCommand";
 import RemoveFromBlacklistCommand from "./Commands/RemoveFromBlacklistCommand";
 import ShowBlacklistCommand from "./Commands/ShowBlacklistCommand";
+import DisallowVoiceChannelsCommand from "./Commands/DisallowVoiceChannelsCommand";
+import RemoveDisallowVoiceChannelsCommand from "./Commands/RemoveDisallowVoiceChannelsCommand";
+import ShowDisallowedVoiceChannelsCommand from "./Commands/ShowDisallowedVoiceChannelsCommand";
 
 // Create instance
 Client.instance;
@@ -44,6 +47,9 @@ new UnmuteCommand();
 new AddToBlacklistCommand();
 new RemoveFromBlacklistCommand();
 new ShowBlacklistCommand();
+new DisallowVoiceChannelsCommand();
+new RemoveDisallowVoiceChannelsCommand();
+new ShowDisallowedVoiceChannelsCommand();
 
 // HTTP server
 HTTPServer.instance;

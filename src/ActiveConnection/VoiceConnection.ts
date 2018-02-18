@@ -1,7 +1,7 @@
 import Config from "../Config/Config";
 import YoutubeConfig from "../Config/YoutubeConfig";
 import Song from "../YouTube/Song";
-import {TextChannel, StreamDispatcher, VoiceChannel, DMChannel, GroupDMChannel, Snowflake} from "discord.js";
+import {TextChannel, StreamDispatcher, VoiceChannel, DMChannel, GroupDMChannel, Snowflake, Message} from "discord.js";
 import Guild from "../Database/Guild";
 
 export default class VoiceConnection
@@ -15,18 +15,21 @@ export default class VoiceConnection
     public triggered:boolean = false;
     public isMuted:boolean = false;
     public database:Guild;
+    protected disconnectAfter:number = 1000*60*2;
 
-    constructor( voiceChannel:VoiceChannel, channel:TextChannel|DMChannel|GroupDMChannel, guildId:Snowflake ) {
-        this.voiceChannel = voiceChannel;
-        this.channel = channel;
-        this.database = new Guild(guildId);
+    constructor( message:Message ) {
+        this.database = new Guild(message.guild.id);
+        this.channel = message.channel;
+
+        this.disconnectWhenChannelIsEmpty();
     }
 
     play():any {
         if( this.queue.length <= 0 ) {
-            return this.channel.send('Queue empty');
+            return this.channel.send('Queue empty').then( (msg: Message) => {
+                msg.delete(Config.message_lifetime);
+            });
         }
-
         if( !this.voiceChannel.connection )
             this.voiceChannel.join();
 
@@ -52,7 +55,9 @@ export default class VoiceConnection
                 }
             };
 
-        this.channel.send('', {embed: embed});
+        this.channel.send('', {embed: embed}).then( (msg: Message) => {
+            msg.delete(Config.message_lifetime);
+        });;
 
         this.dispatcher = this.voiceChannel.connection.playStream(
             song.stream,
@@ -135,6 +140,7 @@ export default class VoiceConnection
         this.truncate();
         if( this.voiceChannel !== undefined && this.voiceChannel.connection !== undefined ) {
             this.voiceChannel.connection.disconnect();
+            this.voiceChannel = undefined;
         }
     }
 
@@ -151,23 +157,43 @@ export default class VoiceConnection
 
     pushToQueue( element:Song, replyPosition:boolean = true ):boolean {
         if( this.queue.length >= Config.queue_limit && Config.queue_limit > 0 ){
-            this.channel.send(`Queue limit of ${Config.queue_limit} exceeded`);
+            this.channel.send(`Queue limit of ${Config.queue_limit} exceeded`).then( (msg: Message) => {
+                msg.delete(Config.message_lifetime);
+            });;
             return false;
         }
 
         this.database.blacklist.data.orderByValue().equalTo(element.youtubeId).once('value').then( (row) => {
             if( row.val() !== null ){
-                this.channel.send(`The song '${element.snippet.title}' is blacklisted by the owner 😔`);
+                this.channel.send(`The song '${element.snippet.title}' is blacklisted by the owner 😔`).then( (msg: Message) => {
+                    msg.delete(Config.message_lifetime);
+                });;
                 return false;
             } else {
                 this.queue.push(element);
                 if( replyPosition )
-                    this.channel.send(`Queued up **${element.snippet.title}** on position ${this.queue.length}`);
+                    this.channel.send(`Queued up **${element.snippet.title}** on position ${this.queue.length}`).then( (msg: Message) => {
+                        msg.delete(Config.message_lifetime);
+                    });
                 if( !this.triggered )
                     this.play();
                 return true;
             }
         });
+    }
+
+    disconnectWhenChannelIsEmpty():void {
+        setTimeout( () => {
+            if( !this.timeToDisconnect() )
+                return this.disconnectWhenChannelIsEmpty();
+
+            this.disconnect();
+            return this.disconnectWhenChannelIsEmpty();
+        }, this.disconnectAfter);
+    }
+
+    timeToDisconnect():boolean {
+        return !( !this.voiceChannel || !this.voiceChannel.connection || (this.voiceChannel.members.size > 1 && this.triggered) );
     }
 
 }

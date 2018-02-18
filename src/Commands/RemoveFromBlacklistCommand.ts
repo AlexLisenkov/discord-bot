@@ -5,6 +5,7 @@ import * as ytdl from 'ytdl-core';
 import * as url from "url";
 import {error} from "util";
 import value from "*.json";
+import Config from "../Config/Config";
 
 export default class RemoveFromBlacklistCommand extends Command
 {
@@ -17,9 +18,13 @@ export default class RemoveFromBlacklistCommand extends Command
                 for( let i in row.val() ){
                     row.ref.child(i).remove();
                 };
-                message.reply(`Song removed from blacklist`)
+                message.reply(`Song removed from blacklist`).then( (msg: Message) => {
+                    msg.delete(Config.message_lifetime);
+                });
             } else {
-                message.reply(`Song not on blacklist`)
+                message.reply(`Song not on blacklist`).then( (msg: Message) => {
+                    msg.delete(Config.message_lifetime);
+                });
             }
         }).catch( error => {
             console.error(error);

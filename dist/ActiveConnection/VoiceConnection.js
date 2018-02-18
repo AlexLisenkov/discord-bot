@@ -4,17 +4,20 @@ const Config_1 = require("../Config/Config");
 const YoutubeConfig_1 = require("../Config/YoutubeConfig");
 const Guild_1 = require("../Database/Guild");
 class VoiceConnection {
-    constructor(voiceChannel, channel, guildId) {
+    constructor(message) {
         this.queue = [];
         this.triggered = false;
         this.isMuted = false;
-        this.voiceChannel = voiceChannel;
-        this.channel = channel;
-        this.database = new Guild_1.default(guildId);
+        this.disconnectAfter = 1000 * 60 * 2;
+        this.database = new Guild_1.default(message.guild.id);
+        this.channel = message.channel;
+        this.disconnectWhenChannelIsEmpty();
     }
     play() {
         if (this.queue.length <= 0) {
-            return this.channel.send('Queue empty');
+            return this.channel.send('Queue empty').then((msg) => {
+                msg.delete(Config_1.default.message_lifetime);
+            });
         }
         if (!this.voiceChannel.connection)
             this.voiceChannel.join();
@@ -36,7 +39,10 @@ class VoiceConnection {
                 'text': `Added by ${song.author.username}`
             }
         };
-        this.channel.send('', { embed: embed });
+        this.channel.send('', { embed: embed }).then((msg) => {
+            msg.delete(Config_1.default.message_lifetime);
+        });
+        ;
         this.dispatcher = this.voiceChannel.connection.playStream(song.stream, YoutubeConfig_1.default.default_stream_options);
         this.currentSong = song;
         this.dispatcher.on('end', () => {
@@ -104,6 +110,7 @@ class VoiceConnection {
         this.truncate();
         if (this.voiceChannel !== undefined && this.voiceChannel.connection !== undefined) {
             this.voiceChannel.connection.disconnect();
+            this.voiceChannel = undefined;
         }
     }
     truncate() {
@@ -117,23 +124,42 @@ class VoiceConnection {
     }
     pushToQueue(element, replyPosition = true) {
         if (this.queue.length >= Config_1.default.queue_limit && Config_1.default.queue_limit > 0) {
-            this.channel.send(`Queue limit of ${Config_1.default.queue_limit} exceeded`);
+            this.channel.send(`Queue limit of ${Config_1.default.queue_limit} exceeded`).then((msg) => {
+                msg.delete(Config_1.default.message_lifetime);
+            });
+            ;
             return false;
         }
         this.database.blacklist.data.orderByValue().equalTo(element.youtubeId).once('value').then((row) => {
             if (row.val() !== null) {
-                this.channel.send(`The song '${element.snippet.title}' is blacklisted by the owner 😔`);
+                this.channel.send(`The song '${element.snippet.title}' is blacklisted by the owner 😔`).then((msg) => {
+                    msg.delete(Config_1.default.message_lifetime);
+                });
+                ;
                 return false;
             }
             else {
                 this.queue.push(element);
                 if (replyPosition)
-                    this.channel.send(`Queued up **${element.snippet.title}** on position ${this.queue.length}`);
+                    this.channel.send(`Queued up **${element.snippet.title}** on position ${this.queue.length}`).then((msg) => {
+                        msg.delete(Config_1.default.message_lifetime);
+                    });
                 if (!this.triggered)
                     this.play();
                 return true;
             }
         });
+    }
+    disconnectWhenChannelIsEmpty() {
+        setTimeout(() => {
+            if (!this.timeToDisconnect())
+                return this.disconnectWhenChannelIsEmpty();
+            this.disconnect();
+            return this.disconnectWhenChannelIsEmpty();
+        }, this.disconnectAfter);
+    }
+    timeToDisconnect() {
+        return !(!this.voiceChannel || !this.voiceChannel.connection || (this.voiceChannel.members.size > 1 && this.triggered));
     }
 }
 exports.default = VoiceConnection;

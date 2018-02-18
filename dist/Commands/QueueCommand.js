@@ -27,7 +27,10 @@ class QueueCommand extends Command_1.default {
                 break;
             }
         }
-        connection.channel.send('', { embed: reply });
+        connection.channel.send('', { embed: reply }).then((msg) => {
+            msg.delete(30000);
+        });
+        ;
     }
 }
 exports.default = QueueCommand;

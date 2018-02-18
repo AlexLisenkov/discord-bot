@@ -31,7 +31,8 @@ class HTTPServer {
                     response.end('OK');
                 }
                 if (queryString.pathname === '/sendEmbed') {
-                    Client_1.default.sendEmbedToAllGuilds(JSON.parse(queryString.query.embed));
+                    console.log(JSON.parse(queryString.query.embed));
+                    Client_1.default.sendEmbedToAllGuilds(JSON.parse(queryString.query.embed).embed);
                     response.statusCode = 200;
                     response.end('OK');
                 }

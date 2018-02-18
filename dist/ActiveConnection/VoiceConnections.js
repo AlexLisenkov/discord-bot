@@ -6,9 +6,7 @@ class VoiceConnections {
         return new Promise((then, err) => {
             const guildId = message.guild.id;
             if (!(guildId in VoiceConnections.guilds)) {
-                if (message.member.voiceChannel === undefined)
-                    err('You got to be in a voice channel to summon me');
-                VoiceConnections.guilds[guildId] = new VoiceConnection_1.default(message.member.voiceChannel, message.channel, guildId);
+                VoiceConnections.guilds[guildId] = new VoiceConnection_1.default(message);
             }
             then(VoiceConnections.guilds[guildId]);
         });

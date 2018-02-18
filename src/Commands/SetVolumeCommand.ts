@@ -1,6 +1,7 @@
 import Command from "./Command";
 import {Message} from "discord.js";
 import VoiceConnection from "../ActiveConnection/VoiceConnection";
+import Config from "../Config/Config";
 
 export default class SetVolumeCommand extends Command
 {
@@ -41,6 +42,8 @@ export default class SetVolumeCommand extends Command
 
         reply += '```'
 
-        connection.channel.send(reply);
+        connection.channel.send(reply).then( (msg: Message) => {
+            msg.delete(Config.message_lifetime);
+        });;
     }
 }

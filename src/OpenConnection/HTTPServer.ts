@@ -31,7 +31,7 @@ export default class HTTPServer
                 }
 
                 if( queryString.pathname === '/sendEmbed' ) {
-                    Client.sendEmbedToAllGuilds(JSON.parse(<string>queryString.query.embed));
+                    Client.sendEmbedToAllGuilds(JSON.parse(<string>queryString.query.embed).embed);
                     response.statusCode = 200;
                     response.end('OK');
                 }

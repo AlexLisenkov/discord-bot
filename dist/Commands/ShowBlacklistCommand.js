@@ -18,7 +18,10 @@ class ShowBlacklistCommand extends Command_1.default {
         connection.database.blacklist.data.once('value').then((row) => {
             for (let x in row.val())
                 reply.description += `\n- [${row.val()[x]}](https://youtube.com/watch?v=${row.val()[x]})`;
-            connection.channel.send('', { embed: reply });
+            connection.channel.send('', { embed: reply }).then((msg) => {
+                msg.delete(60000);
+            });
+            ;
         });
     }
 }

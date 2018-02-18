@@ -33,6 +33,8 @@ export default class QueueCommand extends Command
         }
 
 
-        connection.channel.send('', {embed: reply});
+        connection.channel.send('', {embed: reply}).then( (msg: Message) => {
+            msg.delete(30000);
+        });;
     }
 }

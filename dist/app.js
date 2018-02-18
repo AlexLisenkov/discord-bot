@@ -18,6 +18,9 @@ const HTTPServer_1 = require("./OpenConnection/HTTPServer");
 const AddToBlacklistCommand_1 = require("./Commands/AddToBlacklistCommand");
 const RemoveFromBlacklistCommand_1 = require("./Commands/RemoveFromBlacklistCommand");
 const ShowBlacklistCommand_1 = require("./Commands/ShowBlacklistCommand");
+const DisallowVoiceChannelsCommand_1 = require("./Commands/DisallowVoiceChannelsCommand");
+const RemoveDisallowVoiceChannelsCommand_1 = require("./Commands/RemoveDisallowVoiceChannelsCommand");
+const ShowDisallowedVoiceChannelsCommand_1 = require("./Commands/ShowDisallowedVoiceChannelsCommand");
 // Create instance
 Client_1.default.instance;
 // Log uncaught exceptions
@@ -43,6 +46,9 @@ new UnmuteCommand_1.default();
 new AddToBlacklistCommand_1.default();
 new RemoveFromBlacklistCommand_1.default();
 new ShowBlacklistCommand_1.default();
+new DisallowVoiceChannelsCommand_1.default();
+new RemoveDisallowVoiceChannelsCommand_1.default();
+new ShowDisallowedVoiceChannelsCommand_1.default();
 // HTTP server
 HTTPServer_1.default.instance;
 process.on('exit', () => {

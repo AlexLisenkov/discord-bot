@@ -17,10 +17,13 @@ __Commands__ (prefixed with your defined prefix)
 * `clearqueue` Clears queue and stops playing
 * `disconnect` Disconnect bot from channel and clear queue
 * `blacklist show` Lists blacklisted YouTube ids
+* `voicechannel show` Lists blocked voice channels for the bot
 
 Admin commands:
 * `blacklist add <YouTube-url>` Adds a YouTube video to the blacklist
 * `blacklist remove <YouTube-id>` Removes a YouTube video from the blacklist
+* `voicechannel disallow <channel-nae>` Blocks the bot from joining a channel
+* `voicechannel allow <channel-nae>` Removes the the channel from the blacklist
 
 ## Pre requirements
 
@@ -41,11 +44,12 @@ Admin commands:
 __config.json example__
 ```javascript
 {
-  "secret"  : "Your secret", // This password is used for the http
-  "http_port"  : 8000, (8000 by default)
-  "token"  : "Discord api token",
-  "prefix" : ".",
-  "queue_limit" : 50, // -1 for unlimited
+  "secret": "Your secret", // This password is used for the http
+  "http_port": 8000, (8000 by default)
+  "message_lifetime": 30000,
+  "token": "Discord api token",
+  "prefix": ".",
+  "queue_limit": 50, // -1 for unlimited
   "firebase": {
     "apiKey": "",
     "authDomain": "",
