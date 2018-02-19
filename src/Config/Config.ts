@@ -10,4 +10,5 @@ export default abstract class Config
     public static queue_limit:number = (<any>configFile).queue_limit;
     public static firebase:object = (<any>configFile).firebase;
     public static message_lifetime:number = (<any>configFile).message_lifetime;
+    public static dblapi:string = (<any>configFile).dblapi;
 }

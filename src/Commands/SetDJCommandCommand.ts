@@ -15,6 +15,7 @@ export default class SetDJCommandCommand extends Command
         'blacklist show',
         'clearqueue',
         'disconnect',
+        'dj remove',
         'dj require',
         'dj role',
         'mute',

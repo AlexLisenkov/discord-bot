@@ -10,7 +10,7 @@ export default abstract class Command
         Client.instance.on("message", (message:Message) => {
             if(message.author.bot) return;
             if (message.content.startsWith(Config.prefix+this.command)) {
-                const connect = VoiceConnections.getOrCreate(message);
+                const connect = VoiceConnections.getOrCreate(message.guild);
 
                 connect.then( (connection:VoiceConnection) => {
                     if( message.member.hasPermission('ADMINISTRATOR') )

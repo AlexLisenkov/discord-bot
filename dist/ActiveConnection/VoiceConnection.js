@@ -5,14 +5,15 @@ const YoutubeConfig_1 = require("../Config/YoutubeConfig");
 const Song_1 = require("../YouTube/Song");
 const discord_js_1 = require("discord.js");
 const Guild_1 = require("../Database/Guild");
+const Client_1 = require("./Client");
 class VoiceConnection {
-    constructor(message) {
+    constructor(guild) {
         this.queue = [];
         this.triggered = false;
         this.isMuted = false;
         this.disconnectAfter = 1000 * 60 * 2;
-        this.database = new Guild_1.default(message.guild.id);
-        this.channel = message.channel;
+        this.database = new Guild_1.default(guild.id);
+        this.channel = Client_1.default.getMessageableTextChannel(guild);
         this.database.djRole.data.on('value', value => {
             this.djRole = value.val();
         });
@@ -65,8 +66,12 @@ class VoiceConnection {
         this.channel.send('', { embed: embed }).then((msg) => {
             msg.delete(Config_1.default.message_lifetime);
         });
-        ;
-        this.dispatcher = this.voiceChannel.connection.playStream(song.stream, YoutubeConfig_1.default.default_stream_options);
+        try {
+            this.dispatcher = this.voiceChannel.connection.playStream(song.stream, YoutubeConfig_1.default.default_stream_options);
+        }
+        catch (error) {
+            console.error(error.message);
+        }
         this.currentSong = song;
         this.dispatcher.on('end', () => {
             let timeout = setTimeout(() => {

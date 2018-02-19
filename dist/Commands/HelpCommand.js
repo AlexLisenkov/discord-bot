@@ -30,8 +30,12 @@ class HelpCommand extends Command_1.default {
 **${prefix}clearqueue** *Clears queue and stops playing*
 **${prefix}disconnect** *Disconnect the bot*
 **${prefix}blacklist show** *Lists blacklisted YouTube ids*
+**${prefix}voicechannel show** *Lists blocked voice channels for the bot*
 **${prefix}blacklist add [YouTube-url]** *Adds a YouTube video to the blacklist (admin-only)*
 **${prefix}blacklist remove [YouTube-id]** *Removes a YouTube video from the blacklist (admin-only)*
+**${prefix}dj role [role name]** *Sets the DJ role (admin-only)*
+**${prefix}dj require [command]** *Set a command to DJ-only (help command is always public) (admin-only)*
+**${prefix}dj remove [command]** *Remove DJ-only from a command (admin-only)*
 `
         };
         connection.channel.send('', { embed: reply }).then((msg) => {

@@ -2,10 +2,10 @@ import Config from "../Config/Config";
 import YoutubeConfig from "../Config/YoutubeConfig";
 import Song from "../YouTube/Song";
 import {
-    TextChannel, StreamDispatcher, VoiceChannel, DMChannel, GroupDMChannel, Snowflake, Message,
-    Collection
+    TextChannel, StreamDispatcher, VoiceChannel, Message, Collection, Guild as DiscordGuild
 } from "discord.js";
 import Guild from "../Database/Guild";
+import Client from "./Client";
 
 export default class VoiceConnection
 {
@@ -13,7 +13,7 @@ export default class VoiceConnection
     public dispatcher:StreamDispatcher;
     public currentSong:Song;
     public voiceChannel:VoiceChannel;
-    public channel:TextChannel|DMChannel|GroupDMChannel;
+    public channel:TextChannel;
     public volumeBeforeMute:number;
     public triggered:boolean = false;
     public isMuted:boolean = false;
@@ -24,9 +24,9 @@ export default class VoiceConnection
     public disallowedVoiceChannels:Collection<string, string>;
     protected disconnectAfter:number = 1000*60*2;
 
-    constructor( message:Message ) {
-        this.database = new Guild(message.guild.id);
-        this.channel = message.channel;
+    constructor( guild:DiscordGuild ) {
+        this.database = new Guild(guild.id);
+        this.channel = Client.getMessageableTextChannel(guild);
 
         this.database.djRole.data.on('value', value => {
             this.djRole = value.val();
@@ -86,12 +86,16 @@ export default class VoiceConnection
 
         this.channel.send('', {embed: embed}).then( (msg: Message) => {
             msg.delete(Config.message_lifetime);
-        });;
+        });
 
-        this.dispatcher = this.voiceChannel.connection.playStream(
-            song.stream,
-            YoutubeConfig.default_stream_options
-        );
+        try {
+            this.dispatcher = this.voiceChannel.connection.playStream(
+                song.stream,
+                YoutubeConfig.default_stream_options
+            );
+        } catch (error) {
+            console.error(error.message);
+        }
 
         this.currentSong = song;
 

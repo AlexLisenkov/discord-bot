@@ -20,8 +20,8 @@
     "start": "node ./dist/app.js"
   },
   "dependencies": {
-    "@types/node": "^9.4.6",
     "axios": "^0.17.1",
+    "dblapi.js": "^1.1.0",
     "discord.js": "^11.3.0",
     "ffmpeg-binaries": "^3.2.2-3",
     "firebase": "^4.10.0",
@@ -30,9 +30,10 @@
     "ytdl-core": "^0.20.1"
   },
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=8.9.4"
   },
   "devDependencies": {
+    "@types/node": "^9.4.6",
     "typescript": "^2.7.1"
   }
 }

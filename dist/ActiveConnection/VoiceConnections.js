@@ -2,11 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const VoiceConnection_1 = require("./VoiceConnection");
 class VoiceConnections {
-    static getOrCreate(message) {
+    static getOrCreate(guild) {
         return new Promise((then, err) => {
-            const guildId = message.guild.id;
+            const guildId = guild.id;
             if (!(guildId in VoiceConnections.guilds)) {
-                VoiceConnections.guilds[guildId] = new VoiceConnection_1.default(message);
+                VoiceConnections.guilds[guildId] = new VoiceConnection_1.default(guild);
             }
             then(VoiceConnections.guilds[guildId]);
         });

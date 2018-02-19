@@ -28,6 +28,7 @@ SetDJCommandCommand.availableCommands = [
     'blacklist show',
     'clearqueue',
     'disconnect',
+    'dj remove',
     'dj require',
     'dj role',
     'mute',

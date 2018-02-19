@@ -11,7 +11,7 @@ class Command {
             if (message.author.bot)
                 return;
             if (message.content.startsWith(Config_1.default.prefix + this.command)) {
-                const connect = VoiceConnections_1.default.getOrCreate(message);
+                const connect = VoiceConnections_1.default.getOrCreate(message.guild);
                 connect.then((connection) => {
                     if (message.member.hasPermission('ADMINISTRATOR'))
                         return this.prepareHandle(message, connection);
