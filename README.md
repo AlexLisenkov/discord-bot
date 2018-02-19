@@ -28,8 +28,8 @@ __Commands__ (prefixed with your defined prefix)
 Admin commands:
 * `blacklist add <YouTube-url>` Adds a YouTube video to the blacklist
 * `blacklist remove <YouTube-id>` Removes a YouTube video from the blacklist
-* `voicechannel disallow <channel-nae>` Blocks the bot from joining a channel
-* `voicechannel allow <channel-nae>` Removes the the channel from the blacklist
+* `voicechannel disallow <channel-name>` Blocks the bot from joining a channel
+* `voicechannel allow <channel-name>` Removes the the channel from the blacklist
 * `dj role <role>` Set the DJ role
 * `dj require <command>` Set a command to DJ-only *(help command is always public)*
 * `dj remove <command>` Remove DJ-only from a command
