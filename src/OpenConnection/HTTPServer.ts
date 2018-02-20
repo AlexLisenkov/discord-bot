@@ -15,7 +15,8 @@ export default class HTTPServer
         HTTPServer.server = http.createServer( (request: http.IncomingMessage, response: http.ServerResponse) => {
             request.setEncoding('utf8');
             request.on('data', (chunk) => {
-                //
+                response.statusCode = 404;
+                response.end();
             });
             request.on('end', () => {
                 const queryString = url.parse(request.url, true);
@@ -40,6 +41,7 @@ export default class HTTPServer
                 response.end('Not found');
                 response.end();
             });
+            setTimeout(() => response.end(), 1000);
         });
         HTTPServer.server.listen(Config.http_port);
         HTTPServer._instanciated = true;
