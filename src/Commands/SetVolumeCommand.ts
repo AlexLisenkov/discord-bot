@@ -8,7 +8,7 @@ export default class SetVolumeCommand extends Command
     command: string = "volume";
 
     handle(parameter: string, message: Message, connection: VoiceConnection): void {
-        let volume = parseInt(parameter) / 100
+        let volume = parseInt(parameter) / 100;
         connection.setVolume(volume);
 
         let reply = '```markdown';

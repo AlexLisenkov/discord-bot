@@ -9,7 +9,7 @@ export default class QueueCommand extends Command
 
     handle(parameter: string, message: Message, connection: VoiceConnection): void {
         if( !connection.triggered || connection.queue.length < 1 ) {
-            message.reply('There\'s no queue 🙁, type in \'*' + Config.prefix + 'play [song title]*\' to start');
+            message.reply('There\'s no queue 🙁, type in \'*' + connection.prefix + 'play [song title]*\' to start');
             return null;
         }
 

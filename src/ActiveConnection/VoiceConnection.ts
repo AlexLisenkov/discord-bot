@@ -19,6 +19,7 @@ export default class VoiceConnection
     public isMuted:boolean = false;
     public database:Guild;
     public djRole:string;
+    public prefix:string = Config.prefix;
     public djCommands:Collection<string, string>;
     public blacklist:Collection<string, string>;
     public disallowedVoiceChannels:Collection<string, string>;
@@ -28,6 +29,10 @@ export default class VoiceConnection
         this.database = new Guild(guild.id);
         this.channel = Client.getMessageableTextChannel(guild);
 
+        this.database.guildConfig.setKey('prefix').data.on('value', value => {
+            if( value.val() )
+                this.prefix = value.val();
+        });
         this.database.djRole.data.on('value', value => {
             this.djRole = value.val();
         });

@@ -11,7 +11,7 @@ class RemoveDJCommandCommand extends Command_1.default {
     }
     handle(parameter, message, connection) {
         if (!SetDJCommandCommand_1.default.availableCommands.find((it) => { return it.toLowerCase() === parameter.toLowerCase(); })) {
-            message.reply(`This command does not exist, type ${Config_1.default.prefix}help for available commands`).then((msg) => {
+            message.reply(`This command does not exist, type ${connection.prefix}help for available commands`).then((msg) => {
                 msg.delete(Config_1.default.message_lifetime);
             });
             return null;

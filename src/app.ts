@@ -23,6 +23,7 @@ import SetDJRoleCommand from "./Commands/SetDJRoleCommand";
 import SetDJCommandCommand from "./Commands/SetDJCommandCommand";
 import RemoveDJCommandCommand from "./Commands/RemoveDJCommandCommand";
 import JoinCommand from "./Commands/JoinCommand";
+import SetPrefixCommand from "./Commands/SetPrefixCommand";
 
 // Create instance
 Client.instance;
@@ -58,6 +59,7 @@ new SetDJRoleCommand();
 new SetDJCommandCommand();
 new RemoveDJCommandCommand();
 new JoinCommand();
+new SetPrefixCommand();
 
 // HTTP server
 HTTPServer.instance;

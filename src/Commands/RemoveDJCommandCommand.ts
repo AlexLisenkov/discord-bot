@@ -11,7 +11,7 @@ export default class RemoveDJCommandCommand extends Command
 
     handle(parameter: string, message: Message, connection: VoiceConnection): void {
         if( !SetDJCommandCommand.availableCommands.find( (it) => { return it.toLowerCase() === parameter.toLowerCase() })){
-            message.reply(`This command does not exist, type ${Config.prefix}help for available commands`).then( (msg: Message) => {
+            message.reply(`This command does not exist, type ${connection.prefix}help for available commands`).then( (msg: Message) => {
                 msg.delete(Config.message_lifetime);
             });
             return null;

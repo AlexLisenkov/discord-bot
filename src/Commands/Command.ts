@@ -1,6 +1,6 @@
 import Client from "../ActiveConnection/Client";
 import VoiceConnections from "../ActiveConnection/VoiceConnections";
-import {GuildMember, Message, User} from "discord.js";
+import {Message} from "discord.js";
 import VoiceConnection from "../ActiveConnection/VoiceConnection";
 import Config from "../Config/Config";
 
@@ -9,41 +9,43 @@ export default abstract class Command
     constructor() {
         Client.instance.on("message", (message:Message) => {
             if(message.author.bot) return;
-            if (message.content.startsWith(Config.prefix+this.command)) {
-                const connect = VoiceConnections.getOrCreate(message.guild);
+            const connect = VoiceConnections.getOrCreate(message.guild);
+            connect.then( (connection:VoiceConnection) => {
+                if( !message.content.startsWith(`${connection.prefix}${this.command}`) &&
+                    !( message.content.startsWith(`${Config.prefix}help`) && this.command == 'help' ))
+                    return;
 
-                connect.then( (connection:VoiceConnection) => {
-                    if( message.member.hasPermission('ADMINISTRATOR') )
-                        return this.prepareHandle(message, connection);
+                if( message.member.hasPermission('ADMINISTRATOR') )
+                    return this.prepareHandle(message, connection);
 
-                    if( !this.requiresDJRole(connection) && !this.adminOnly )
-                        return this.prepareHandle(message, connection);
+                if( !this.requiresDJRole(connection) && !this.adminOnly )
+                    return this.prepareHandle(message, connection);
 
-                    if( this.requiresDJRole(connection) && message.member.roles.exists('id', connection.djRole) )
-                        return this.prepareHandle(message, connection);
+                if( this.requiresDJRole(connection) && message.member.roles.exists('id', connection.djRole) )
+                    return this.prepareHandle(message, connection);
 
-                    if( !this.requiresDJRole(connection) && this.adminOnly )
-                        message.reply(`This command is for administrators only`).then((msg: Message) => {
-                            msg.delete(Config.message_lifetime);
-                        });
-                    else
-                        message.reply(`You need the DJ role to do this`).then((msg: Message) => {
-                            msg.delete(Config.message_lifetime);
-                        });
-                }).catch( err => {
-                    message.reply(err);
-                } );
-            }
+                if( !this.requiresDJRole(connection) && this.adminOnly )
+                    message.reply(`This command is for administrators only`).then((msg: Message) => {
+                        msg.delete(Config.message_lifetime);
+                    });
+                else
+                    message.reply(`You need the DJ role to do this`).then((msg: Message) => {
+                        msg.delete(Config.message_lifetime);
+                    });
+            }).catch( err => {
+                message.reply(err);
+            } );
+
         });
     }
 
     public prepareHandle(message:Message, connection:VoiceConnection):void {
         if( !this.requiresVoiceChannel || (this.requiresVoiceChannel && connection.voiceChannel !== undefined)){
-            this.handle(message.content.replace(Config.prefix+this.command, '').trim(), message, connection);
+            this.handle(message.content.replace(connection.prefix+this.command, '').trim(), message, connection);
             return null;
         }
         if( Command.setVoiceChannel(message, connection) )
-             this.handle(message.content.replace(Config.prefix+this.command, '').trim(), message, connection);
+             this.handle(message.content.replace(connection.prefix+this.command, '').trim(), message, connection);
     }
 
     public requiresDJRole(connection:VoiceConnection):boolean {

@@ -25,6 +25,7 @@ const SetDJRoleCommand_1 = require("./Commands/SetDJRoleCommand");
 const SetDJCommandCommand_1 = require("./Commands/SetDJCommandCommand");
 const RemoveDJCommandCommand_1 = require("./Commands/RemoveDJCommandCommand");
 const JoinCommand_1 = require("./Commands/JoinCommand");
+const SetPrefixCommand_1 = require("./Commands/SetPrefixCommand");
 // Create instance
 Client_1.default.instance;
 // Log uncaught exceptions
@@ -57,6 +58,7 @@ new SetDJRoleCommand_1.default();
 new SetDJCommandCommand_1.default();
 new RemoveDJCommandCommand_1.default();
 new JoinCommand_1.default();
+new SetPrefixCommand_1.default();
 // HTTP server
 HTTPServer_1.default.instance;
 process.on('exit', () => {

@@ -11,9 +11,14 @@ class VoiceConnection {
         this.queue = [];
         this.triggered = false;
         this.isMuted = false;
+        this.prefix = Config_1.default.prefix;
         this.disconnectAfter = 1000 * 60 * 2;
         this.database = new Guild_1.default(guild.id);
         this.channel = Client_1.default.getMessageableTextChannel(guild);
+        this.database.guildConfig.setKey('prefix').data.on('value', value => {
+            if (value.val())
+                this.prefix = value.val();
+        });
         this.database.djRole.data.on('value', value => {
             this.djRole = value.val();
         });

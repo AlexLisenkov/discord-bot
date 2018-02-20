@@ -1,14 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Command_1 = require("./Command");
-const Config_1 = require("../Config/Config");
 class HelpCommand extends Command_1.default {
     constructor() {
         super(...arguments);
         this.command = "help";
     }
     handle(parameter, message, connection) {
-        const prefix = Config_1.default.prefix;
+        const prefix = connection.prefix;
         const reply = {
             color: 0xA2E13D,
             author: {
@@ -36,6 +35,7 @@ class HelpCommand extends Command_1.default {
 **${prefix}dj role [role name]** *Sets the DJ role (admin-only)*
 **${prefix}dj require [command]** *Set a command to DJ-only (help command is always public) (admin-only)*
 **${prefix}dj remove [command]** *Remove DJ-only from a command (admin-only)*
+**${prefix}prefix [character]** *The the prefix character (or string, admin-only)*
 `
         };
         connection.channel.send('', { embed: reply }).then((msg) => {

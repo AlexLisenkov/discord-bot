@@ -28,7 +28,7 @@ class Client {
                             "thumbnail": {
                                 "url": Client._instance.user.avatarURL
                             },
-                            "description": `You are the ${Client._instance.guilds.size}th server!\nPlease, say **${Config_1.default.prefix}help** to see a list of commands`
+                            "description": `You are the ${Client._instance.guilds.size}th server!\nPlease, say **${value.prefix}help** to see a list of commands\n\nTo change the prefix say **${value.prefix}prefix [character]**`
                         } });
                 });
             });
