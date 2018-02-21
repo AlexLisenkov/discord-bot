@@ -8,6 +8,9 @@ class Command {
         this.adminOnly = false;
         this.requiresVoiceChannel = false;
         Client_1.default.instance.on("message", (message) => {
+            const channel = message.channel;
+            if (!channel.permissionsFor(Client_1.default.instance.user).has('READ_MESSAGES'))
+                return;
             if (message.author.bot)
                 return;
             const connect = VoiceConnections_1.default.getOrCreate(message.guild);
@@ -15,6 +18,7 @@ class Command {
                 if (!message.content.startsWith(`${connection.prefix}${this.command}`) &&
                     !(message.content.startsWith(`${Config_1.default.prefix}help`) && this.command == 'help'))
                     return;
+                connection.channel = message.channel;
                 if (message.member.hasPermission('ADMINISTRATOR'))
                     return this.prepareHandle(message, connection);
                 if (!this.requiresDJRole(connection) && !this.adminOnly)

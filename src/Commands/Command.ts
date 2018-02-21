@@ -1,6 +1,6 @@
 import Client from "../ActiveConnection/Client";
 import VoiceConnections from "../ActiveConnection/VoiceConnections";
-import {Message} from "discord.js";
+import {Message, TextChannel} from "discord.js";
 import VoiceConnection from "../ActiveConnection/VoiceConnection";
 import Config from "../Config/Config";
 
@@ -14,6 +14,8 @@ export default abstract class Command
                 if( !message.content.startsWith(`${connection.prefix}${this.command}`) &&
                     !( message.content.startsWith(`${Config.prefix}help`) && this.command == 'help' ))
                     return;
+
+                connection.channel = <TextChannel>message.channel;
 
                 if( message.member.hasPermission('ADMINISTRATOR') )
                     return this.prepareHandle(message, connection);
@@ -35,7 +37,6 @@ export default abstract class Command
             }).catch( err => {
                 message.reply(err);
             } );
-
         });
     }
 

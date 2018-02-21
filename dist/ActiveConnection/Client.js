@@ -44,6 +44,10 @@ class Client {
                         dbl.postStats(Client._instance.guilds.size);
                 }, 1800000);
             }
+            Client._instance.on('error', (error) => {
+                Client._instance.login(Config_1.default.token);
+                console.error(error);
+            });
         });
         return Client._instance;
     }
