@@ -38,9 +38,10 @@ export default class Client
             Client._instance.on('guildDelete', (guild:Guild) => {
                 VoiceConnections.remove(guild.id);
             });
-            if(Config.dblapi && Config.dblapi != ""){
+
+            if(Config.dblapi != undefined && Config.dblapi != ""){
                 setInterval(() => {
-                    const dbl = new DBL(Config.dblapi);
+                    const dbl = new DBL(Config.dblapi, Client._instance);
                     if( Client._instance.shard )
                         dbl.postStats(Client._instance.guilds.size, Client._instance.shard.id, Client._instance.shard.count);
                     else

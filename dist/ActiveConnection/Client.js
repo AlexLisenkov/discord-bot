@@ -35,6 +35,9 @@ class Client {
             Client._instance.on('guildDelete', (guild) => {
                 VoiceConnections_1.default.remove(guild.id);
             });
+            setInterval(() => {
+                console.log(Client._instance.guilds.size, Client._instance.shard);
+            }, 10);
             if (Config_1.default.dblapi && Config_1.default.dblapi != "") {
                 setInterval(() => {
                     const dbl = new dblapi_js_1.default(Config_1.default.dblapi);
