@@ -11,6 +11,15 @@ class Client {
         Client._instance = new Discord.Client();
         Client._instance.on('ready', () => {
             Client._instance.user.setActivity(`${Config_1.default.prefix}help for help`);
+            if (Config_1.default.dblapi != undefined && Config_1.default.dblapi != "") {
+                setInterval(() => {
+                    const dbl = new dblapi_js_1.default(Config_1.default.dblapi, Client._instance);
+                    if (Client._instance.shard != undefined && Client._instance.shard != null)
+                        dbl.postStats(Client._instance.guilds.size, Client._instance.shard.id, Client._instance.shard.count);
+                    else
+                        dbl.postStats(Client._instance.guilds.size);
+                }, 1800000);
+            }
         });
         Client._instance.login(Config_1.default.token).then(() => {
             Client._instance.guilds.forEach((value, key) => {
@@ -35,18 +44,6 @@ class Client {
             Client._instance.on('guildDelete', (guild) => {
                 VoiceConnections_1.default.remove(guild.id);
             });
-            setInterval(() => {
-                console.log(Client._instance.guilds.size, Client._instance.shard);
-            }, 10);
-            if (Config_1.default.dblapi && Config_1.default.dblapi != "") {
-                setInterval(() => {
-                    const dbl = new dblapi_js_1.default(Config_1.default.dblapi);
-                    if (Client._instance.shard)
-                        dbl.postStats(Client._instance.guilds.size, Client._instance.shard.id, Client._instance.shard.count);
-                    else
-                        dbl.postStats(Client._instance.guilds.size);
-                }, 1800000);
-            }
             Client._instance.on('error', (error) => {
                 Client._instance.login(Config_1.default.token);
                 console.error(error);

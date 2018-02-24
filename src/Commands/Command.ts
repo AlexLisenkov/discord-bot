@@ -1,21 +1,26 @@
 import Client from "../ActiveConnection/Client";
 import VoiceConnections from "../ActiveConnection/VoiceConnections";
-import {Message, TextChannel} from "discord.js";
+import {GuildMember, Message, TextChannel} from "discord.js";
 import VoiceConnection from "../ActiveConnection/VoiceConnection";
 import Config from "../Config/Config";
 
 export default abstract class Command
 {
+    private connection:VoiceConnection;
+    private message:Message;
+
     constructor() {
         Client.instance.on("message", (message:Message) => {
             if(message.author.bot) return;
             const connect = VoiceConnections.getOrCreate(message.guild);
+            this.message = message;
             connect.then( (connection:VoiceConnection) => {
                 if( !message.content.startsWith(`${connection.prefix}${this.command}`) &&
                     !( message.content.startsWith(`${Config.prefix}help`) && this.command == 'help' ))
                     return;
 
                 connection.channel = <TextChannel>message.channel;
+                this.connection = connection;
 
                 if( message.member.hasPermission('ADMINISTRATOR') )
                     return this.prepareHandle(message, connection);

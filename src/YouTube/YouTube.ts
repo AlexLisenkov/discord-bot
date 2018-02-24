@@ -81,11 +81,11 @@ export default class YouTube
                         .then( response => {
                             const videoItems = response.data.items;
                             const videos = [];
-                             for ( let i = 0; i < videoItems.length; i++ ){
-                                 const video = videoItems[i];
-                                 videos.push(new Song(video));
-                             }
-                             return then(videos);
+                            for ( let i = 0; i < videoItems.length; i++ ){
+                                const video = videoItems[i];
+                                videos.push(new Song(video));
+                            }
+                            return then(videos);
                         }).catch( e => {
                             return console.error(e);
                         });

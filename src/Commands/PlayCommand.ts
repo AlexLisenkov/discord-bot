@@ -16,13 +16,19 @@ export default class PlayCommand extends Command
                 result.author = message.author;
                 connection.pushToQueue(result);
             } else {
-                connection.channel.send(`Loaded ${result.length} songs from playlist`).then( (msg: Message) => {
-                    msg.delete(Config.message_lifetime);
+                message.reply(`The query resulted in a playlist of ${result.length} songs, please react with 👍 within 15 seconds to confirm.`)
+                .then( (msg: Message) => {
+                    const filter = (reaction, user) => reaction.emoji.name === '👍' && (user.id === message.author.id || user.permissions.has('ADMINISTRATOR') || user.roles.exists('id', connection.djRole));
+                    msg.awaitReactions(filter, { time: 15000 }).then( () => {
+                        connection.channel.send(`Loaded ${result.length} songs from playlist`).then((msg: Message) => {
+                            msg.delete(Config.message_lifetime);
+                        });
+                        for (let i = 0; i < result.length; i++) {
+                            result[i].author = message.author;
+                            connection.pushToQueue(result[i], false);
+                        }
+                    });
                 });
-                for (let i = 0; i < result.length; i++) {
-                    result[i].author = message.author;
-                    connection.pushToQueue(result[i], false);
-                }
             }
         }).catch((error) => {
             message.reply(error);

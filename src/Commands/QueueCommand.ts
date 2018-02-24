@@ -13,6 +13,13 @@ export default class QueueCommand extends Command
             return null;
         }
 
+        const perPage = 20;
+        const totalPages = Math.ceil( connection.queue.length / perPage);
+        let page = parseInt(parameter);
+
+        if( isNaN(page) || page <= 0 || page > totalPages)
+            page = 1;
+
         const reply =
             {
                 color: 0xA2E13D,
@@ -20,15 +27,16 @@ export default class QueueCommand extends Command
                     'name': '🔻 Playlist',
                     'url': 'https://discord.gg',
                 },
-                description: ''
+                description: '',
+                footer: {
+                    'text': `Showing page ${page} of ${totalPages}\t(${connection.prefix}queue [page] to see other pages)`
+                }
             };
 
-        for ( let i = 0; i < connection.queue.length; i++){
-            reply.description += `**[${i+1}]**: ${connection.queue[i].snippet.title}\n`;
-            if( i >= 19 ) {
-                reply.description += `\n Showing ${i+1} of ${connection.queue.length} total`;
+        for ( let i = perPage*(page-1); i < perPage*page; i++){
+            if( i+1 > connection.queue.length )
                 break;
-            }
+            reply.description += `**[${i+1}]**: ${connection.queue[i].snippet.title}\n`;
         }
 
         connection.channel.send('', {embed: reply}).then( (msg: Message) => {

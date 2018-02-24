@@ -20,12 +20,13 @@ export default class HelpCommand extends Command
                 description: `
 **${prefix}help** *List commands*
 **${prefix}play** [query|url] *Add a song to queue*
+**${prefix}forceplay** [query|url] *Plays a song directly, skipping the current song*
 **${prefix}pause** *Pause current song*
 **${prefix}resume** *Resume current song*
-**${prefix}queue** *List queue*
+**${prefix}queue [page]** *List queue, page command is optional*
 **${prefix}skip** *Skip current song*
 **${prefix}np** *Show the song that is currenty playing*
-**${prefix}remove** [index] *Remove a song from the playlist (hint: say '${prefix}queue' to see indexes)*
+**${prefix}remove** [index|range|user] *Remove a song from the playlist (hint: say '${prefix}queue' to see indexes)*
 **${prefix}volume** [0-100] *Set the volume*
 **${prefix}mute** *Mute me*
 **${prefix}unmute** *Unmute me*

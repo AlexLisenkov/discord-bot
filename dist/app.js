@@ -26,6 +26,8 @@ const SetDJCommandCommand_1 = require("./Commands/SetDJCommandCommand");
 const RemoveDJCommandCommand_1 = require("./Commands/RemoveDJCommandCommand");
 const JoinCommand_1 = require("./Commands/JoinCommand");
 const SetPrefixCommand_1 = require("./Commands/SetPrefixCommand");
+const ForcePlayCommand_1 = require("./Commands/ForcePlayCommand");
+const ShuffleCommand_1 = require("./Commands/ShuffleCommand");
 // Create instance
 Client_1.default.instance;
 // Log uncaught exceptions
@@ -36,10 +38,12 @@ process.on('uncaughtException', (err) => {
 });
 // Register commands
 new PlayCommand_1.default();
+new ForcePlayCommand_1.default();
 new ClearQueueCommand_1.default();
 new DisconnectCommand_1.default();
 new HelpCommand_1.default();
 new MuteCommand_1.default();
+new ShuffleCommand_1.default();
 new NowPlayingCommand_1.default();
 new PauseCommand_1.default();
 new QueueCommand_1.default();

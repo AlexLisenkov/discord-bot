@@ -11,11 +11,13 @@ class Command {
             if (message.author.bot)
                 return;
             const connect = VoiceConnections_1.default.getOrCreate(message.guild);
+            this.message = message;
             connect.then((connection) => {
                 if (!message.content.startsWith(`${connection.prefix}${this.command}`) &&
                     !(message.content.startsWith(`${Config_1.default.prefix}help`) && this.command == 'help'))
                     return;
                 connection.channel = message.channel;
+                this.connection = connection;
                 if (message.member.hasPermission('ADMINISTRATOR'))
                     return this.prepareHandle(message, connection);
                 if (!this.requiresDJRole(connection) && !this.adminOnly)

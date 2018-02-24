@@ -5,18 +5,21 @@ Next to listening to music you also can:
 * Manage the **channels the bot can't join**
 * Fully manageable **roles and permissions**
 * Ability to **blacklist songs**
+* Choose your own **custom prefix**
 
 ## Features
 __Commands__ (prefixed with your defined prefix)
 * `help` List commands
 * `join` Joins a channel
 * `play <query|url>` Add song to queue
+* `forceplay <query|url>` Plays a song directly, skipping the current song
 * `pause` Pause current song
 * `resume` Resume current song
-* `queue` List queue
+* `queue <page>` List queue, page command is optional
 * `skip` Skip current song
 * `np` Show the song that is currenty playing
-* `remove <index>` Remove a song from the playlist (index can be found in queue)
+* `shuffle` Suffles the queue
+* `remove <index|range|user>` Remove a song from the playlist (index, range or mention a user)
 * `volume <0-100>` Set the volume
 * `mute` Mute the bot
 * `unmute` Unmute the bot
@@ -42,7 +45,7 @@ Note:
 
 * [A discord bot](https://discordapp.com/developers/applications/me)
 * [A YouTube v3 api key](https://developers.google.com/youtube/v3/getting-started)
-* [Node.js](https://nodejs.org) (6 or higher, latest version recommended)
+* [Node.js](https://nodejs.org) (8.9.4 or higher, latest version recommended)
 * [ffmpeg](https://www.ffmpeg.org/) (latest)
 * [Firebase](https://console.firebase.google.com/u/0/) (just the database)
 

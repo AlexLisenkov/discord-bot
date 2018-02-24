@@ -14,6 +14,16 @@ export default class Client
         Client._instance = new Discord.Client();
         Client._instance.on('ready', () => {
             Client._instance.user.setActivity(`${Config.prefix}help for help`);
+
+            if(Config.dblapi != undefined && Config.dblapi != ""){
+                setInterval(() => {
+                    const dbl = new DBL(Config.dblapi, Client._instance);
+                    if( Client._instance.shard != undefined && Client._instance.shard != null )
+                        dbl.postStats(Client._instance.guilds.size, Client._instance.shard.id, Client._instance.shard.count);
+                    else
+                        dbl.postStats(Client._instance.guilds.size);
+                }, 1800000);
+            }
         });
         Client._instance.login(Config.token).then( () => {
             Client._instance.guilds.forEach( (value, key) => {
@@ -39,15 +49,6 @@ export default class Client
                 VoiceConnections.remove(guild.id);
             });
 
-            if(Config.dblapi != undefined && Config.dblapi != ""){
-                setInterval(() => {
-                    const dbl = new DBL(Config.dblapi, Client._instance);
-                    if( Client._instance.shard )
-                        dbl.postStats(Client._instance.guilds.size, Client._instance.shard.id, Client._instance.shard.count);
-                    else
-                        dbl.postStats(Client._instance.guilds.size);
-                }, 1800000);
-            }
             Client._instance.on('error', (error) => {
                 Client._instance.login(Config.token);
                 console.error(error);

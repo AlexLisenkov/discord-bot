@@ -24,6 +24,8 @@ import SetDJCommandCommand from "./Commands/SetDJCommandCommand";
 import RemoveDJCommandCommand from "./Commands/RemoveDJCommandCommand";
 import JoinCommand from "./Commands/JoinCommand";
 import SetPrefixCommand from "./Commands/SetPrefixCommand";
+import ForcePlayCommand from "./Commands/ForcePlayCommand";
+import ShuffleCommand from "./Commands/ShuffleCommand";
 
 // Create instance
 Client.instance;
@@ -37,10 +39,12 @@ process.on('uncaughtException', (err) => {
 
 // Register commands
 new PlayCommand();
+new ForcePlayCommand();
 new ClearQueueCommand();
 new DisconnectCommand();
 new HelpCommand();
 new MuteCommand();
+new ShuffleCommand();
 new NowPlayingCommand();
 new PauseCommand();
 new QueueCommand();
