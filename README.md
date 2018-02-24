@@ -1,4 +1,5 @@
 # Discord Music Bot
+[![Discord Bots](https://discordbots.org/api/widget/status/387686098534531076.svg?noavatar=true)](https://discordbots.org/bot/387686098534531076)[![Discord Bots](https://discordbots.org/api/widget/servers/387686098534531076.svg?noavatar=true)](https://discordbots.org/bot/387686098534531076)[![Discord Bots](https://discordbots.org/api/widget/upvotes/387686098534531076.svg?noavatar=true)](https://discordbots.org/bot/387686098534531076)
 An open-source TypeScript music bot for discord that runs on Node.
 
 Next to listening to music you also can:
@@ -36,6 +37,7 @@ Admin commands:
 * `dj role <role>` Set the DJ role
 * `dj require <command>` Set a command to DJ-only *(help command is always public)*
 * `dj remove <command>` Remove DJ-only from a command
+* `prefix <char>` Set the prefix for commands
 
 Note:
 * Administrators can always run every command
@@ -92,7 +94,4 @@ __config.youtube.json example__
 
 ### Todo:
 
-* Ability to load over 50 playlist songs
-* YouTube live streams
-* Confirmation when search result is playlist
-* Seek command, to seek to a time in the song
+[See our trello](https://trello.com/b/kWbyNTxN/kanban)
