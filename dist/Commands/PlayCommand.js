@@ -17,12 +17,12 @@ class PlayCommand extends Command_1.default {
                 connection.pushToQueue(result);
             }
             else {
-                message.reply(`The query resulted in a playlist of ${result.length} songs, please react with 👍 within 15 seconds to confirm.`)
+                message.reply(`The query resulted in a playlist of ${result.length} songs, please react with ✅ within ${Config_1.default.message_lifetime / 1000} seconds to confirm.`)
                     .then((msg) => {
-                    const filter = (reaction, user) => reaction.emoji.name === '👍' && (user.id === message.author.id || user.permissions.has('ADMINISTRATOR') || user.roles.exists('id', connection.djRole) || !user.bot);
-                    msg.awaitReactions(filter, { time: 15000 }).then(() => {
+                    msg.react('✅');
+                    const filter = (reaction, user) => reaction.emoji.name === '✅' && (user.id === message.author.id || user.permissions.has('ADMINISTRATOR') || user.roles.exists('id', connection.djRole) || !user.bot);
+                    msg.awaitReactions(filter).then(() => {
                         connection.channel.send(`Loaded ${result.length} songs from playlist`).then((msg) => {
-                            msg.react('👍');
                             msg.delete(Config_1.default.message_lifetime);
                         });
                         for (let i = 0; i < result.length; i++) {
@@ -30,6 +30,7 @@ class PlayCommand extends Command_1.default {
                             connection.pushToQueue(result[i], false);
                         }
                     });
+                    msg.delete(Config_1.default.message_lifetime);
                 });
             }
         }).catch((error) => {
