@@ -3,23 +3,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Config_1 = require("../Config/Config");
 const Discord = require("discord.js");
 const VoiceConnections_1 = require("./VoiceConnections");
-const dblapi_js_1 = require("dblapi.js");
+const DBL = require("dblapi.js");
 class Client {
     static get instance() {
         if (Client._instance != null)
             return Client._instance;
         Client._instance = new Discord.Client();
+        if (Config_1.default.dblapi != undefined && Config_1.default.dblapi != "") {
+            new DBL(Config_1.default.dblapi, Client._instance);
+        }
         Client._instance.on('ready', () => {
             Client._instance.user.setActivity(`${Config_1.default.prefix}help for help`);
-            if (Config_1.default.dblapi != undefined && Config_1.default.dblapi != "") {
-                setInterval(() => {
-                    const dbl = new dblapi_js_1.default(Config_1.default.dblapi, Client._instance);
-                    if (Client._instance.shard != undefined && Client._instance.shard != null)
-                        dbl.postStats(Client._instance.guilds.size, Client._instance.shard.id, Client._instance.shard.count);
-                    else
-                        dbl.postStats(Client._instance.guilds.size);
-                }, 1800000);
-            }
         });
         Client._instance.login(Config_1.default.token).then(() => {
             Client._instance.guilds.forEach((value, key) => {
