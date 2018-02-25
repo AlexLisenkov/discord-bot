@@ -28,6 +28,7 @@ const JoinCommand_1 = require("./Commands/JoinCommand");
 const SetPrefixCommand_1 = require("./Commands/SetPrefixCommand");
 const ForcePlayCommand_1 = require("./Commands/ForcePlayCommand");
 const ShuffleCommand_1 = require("./Commands/ShuffleCommand");
+const API_1 = require("./OpenConnection/API");
 // Create instance
 Client_1.default.instance;
 // Log uncaught exceptions
@@ -69,4 +70,5 @@ process.on('exit', () => {
     Client_1.default.sendMessageToAllGuilds('Goodbye @everyone');
     HTTPServer_1.default.server.close();
 });
+API_1.default();
 //# sourceMappingURL=app.js.map

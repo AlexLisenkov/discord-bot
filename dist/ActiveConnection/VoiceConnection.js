@@ -13,6 +13,7 @@ class VoiceConnection {
         this.isMuted = false;
         this.prefix = Config_1.default.prefix;
         this.disconnectAfter = 1000 * 60 * 2;
+        this.guild = guild;
         this.database = new Guild_1.default(guild.id);
         this.channel = Client_1.default.getMessageableTextChannel(guild);
         this.database.guildConfig.setKey('prefix').data.on('value', value => {

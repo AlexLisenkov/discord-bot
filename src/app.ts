@@ -26,6 +26,7 @@ import JoinCommand from "./Commands/JoinCommand";
 import SetPrefixCommand from "./Commands/SetPrefixCommand";
 import ForcePlayCommand from "./Commands/ForcePlayCommand";
 import ShuffleCommand from "./Commands/ShuffleCommand";
+import API from "./OpenConnection/API";
 
 // Create instance
 Client.instance;
@@ -71,3 +72,5 @@ process.on('exit', () => {
     Client.sendMessageToAllGuilds('Goodbye @everyone');
     HTTPServer.server.close();
 });
+
+API();

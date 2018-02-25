@@ -4,6 +4,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const configFile = require("../../config.json");
 class Config {
 }
+Config.client_id = configFile.client_id;
 Config.token = configFile.token;
 Config.secret = configFile.secret;
 Config.prefix = configFile.prefix;

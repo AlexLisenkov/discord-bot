@@ -18,14 +18,16 @@ export default class VoiceConnection
     public triggered:boolean = false;
     public isMuted:boolean = false;
     public database:Guild;
+    public guild:DiscordGuild;
     public djRole:string;
     public prefix:string = Config.prefix;
-    public djCommands:Collection<string, string>;
+    public djCommands:Collection<string, boolean>;
     public blacklist:Collection<string, string>;
     public disallowedVoiceChannels:Collection<string, string>;
     protected disconnectAfter:number = 1000*60*2;
 
     constructor( guild:DiscordGuild ) {
+        this.guild = guild;
         this.database = new Guild(guild.id);
         this.channel = Client.getMessageableTextChannel(guild);
 
@@ -37,7 +39,7 @@ export default class VoiceConnection
             this.djRole = value.val();
         });
         this.database.djCommands.data.on('value', value => {
-            let collect = <Collection<string, string>> new Collection();
+            let collect = <Collection<string, boolean>> new Collection();
             for( let x in value.val() )
                 collect.set(x, value.val()[x]);
             this.djCommands = collect;

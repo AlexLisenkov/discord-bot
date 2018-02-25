@@ -3,6 +3,7 @@ import * as configFile from "../../config.json";
 
 export default abstract class Config
 {
+    public static client_id:string = (<any>configFile).client_id;
     public static token:string = (<any>configFile).token;
     public static secret:string = (<any>configFile).secret;
     public static prefix:string = (<any>configFile).prefix;
