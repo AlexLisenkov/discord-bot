@@ -21,7 +21,7 @@ class PlayCommand extends Command_1.default {
                     .then((msg) => {
                     msg.react('✅');
                     const filter = (reaction, user) => reaction.emoji.name === '✅' && (user.id === message.author.id || user.permissions.has('ADMINISTRATOR') || user.roles.exists('id', connection.djRole) || !user.bot);
-                    msg.awaitReactions(filter).then(() => {
+                    msg.awaitReactions(filter, { time: 1000 }).then(() => {
                         connection.channel.send(`Loaded ${result.length} songs from playlist`).then((msg) => {
                             msg.delete(Config_1.default.message_lifetime);
                         });
