@@ -16,30 +16,36 @@ class DisallowVoiceChannelsCommand extends Command_1.default {
             return null;
         }
         const voiceChannels = message.guild.channels.findAll('type', 'voice');
-        let channel = null;
+        let found = false;
         for (let x in voiceChannels) {
-            if (parameter.toLowerCase() == voiceChannels[x].name.toLowerCase())
+            let channel = null;
+            if (parameter.toLowerCase() == voiceChannels[x].name.toLowerCase()) {
                 channel = voiceChannels[x];
+                found = true;
+            }
+            else {
+                continue;
+            }
+            connection.database.disallowedVoiceChannels.data.orderByValue().equalTo(channel.id).once('value').then((row) => {
+                if (row.val() !== null) {
+                    message.reply(`Channel already blocked`).then((msg) => {
+                        msg.delete(Config_1.default.message_lifetime);
+                    });
+                }
+                else {
+                    connection.database.disallowedVoiceChannels.data.push(channel.id);
+                    message.reply(`Channel added '${parameter}' to blacklist`).then((msg) => {
+                        msg.delete(Config_1.default.message_lifetime);
+                    });
+                }
+            });
         }
-        if (!channel) {
+        if (!found) {
             message.reply(`Could not find a voice channel named '${parameter}'`).then((msg) => {
                 msg.delete(Config_1.default.message_lifetime);
             });
             return null;
         }
-        connection.database.disallowedVoiceChannels.data.orderByValue().equalTo(channel.id).once('value').then((row) => {
-            if (row.val() !== null) {
-                message.reply(`Channel already blocked`).then((msg) => {
-                    msg.delete(Config_1.default.message_lifetime);
-                });
-            }
-            else {
-                connection.database.disallowedVoiceChannels.data.push(channel.id);
-                message.reply(`Channel added '${parameter}' to blacklist`).then((msg) => {
-                    msg.delete(Config_1.default.message_lifetime);
-                });
-            }
-        });
     }
 }
 exports.default = DisallowVoiceChannelsCommand;

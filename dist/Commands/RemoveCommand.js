@@ -18,7 +18,7 @@ class RemoveCommand extends Command_1.default {
         return null;
     }
     removeByIndex(index, message, connection) {
-        if (isNaN(index)) {
+        if (isNaN(index) || index > connection.queue.length) {
             message.reply('Index does not exist').then((msg) => {
                 msg.delete(Config_1.default.message_lifetime);
             });

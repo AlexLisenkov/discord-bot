@@ -19,7 +19,7 @@ export default class RemoveCommand extends Command
     }
 
     public removeByIndex( index:number, message: Message, connection: VoiceConnection ):void {
-        if( isNaN(index) ){
+        if( isNaN(index) || index > connection.queue.length){
             message.reply('Index does not exist').then((msg: Message) => {
                 msg.delete(Config.message_lifetime);
             });

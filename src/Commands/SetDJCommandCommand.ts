@@ -19,6 +19,7 @@ export default class SetDJCommandCommand extends Command
         'dj require',
         'dj role',
         'forceplay',
+        'move',
         'mute',
         'nickname',
         'np',

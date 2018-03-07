@@ -1,5 +1,5 @@
 import Command from "./Command";
-import {Message} from "discord.js";
+import {Message, MessageReaction} from "discord.js";
 import VoiceConnection from "../ActiveConnection/VoiceConnection";
 import Config from "../Config/Config";
 
@@ -41,6 +41,73 @@ export default class QueueCommand extends Command
 
         connection.channel.send('', {embed: reply}).then( (msg: Message) => {
             msg.delete(30000);
+            if( totalPages == 1 )
+                return;
+
+            this.firstPage(page, totalPages, msg, message, connection).then( () => {
+                this.prevPage(page, totalPages, msg, message, connection).then( () => {
+                    this.nextPage(page, totalPages, msg, message, connection).then( () => {
+                        this.lastPage(page, totalPages, msg, message, connection);
+                    })
+                })
+            });
         });
+    }
+
+    firstPage(page:number, totalPages:number, msg:Message, message:Message, connection:VoiceConnection):Promise<MessageReaction> {
+        const first_page_filter = (reaction, user) => (
+            (
+                !user.bot &&
+                reaction.emoji.name == '⏮'
+            )
+        );
+        msg.createReactionCollector(first_page_filter).on('collect', () => {
+            msg.delete(0);
+            this.handle('1', message, connection);
+        });
+        return msg.react('⏮');
+    }
+
+    prevPage(page:number, totalPages:number, msg:Message, message:Message, connection:VoiceConnection):Promise<MessageReaction> {
+        const previous_filter = (reaction, user) => (
+            (
+                !user.bot &&
+                reaction.emoji.name == '⬅'
+            )
+        );
+        msg.createReactionCollector(previous_filter).on('collect', () => {
+            msg.delete(0);
+            this.handle(`${page-1}`, message, connection);
+        });
+        return msg.react('⬅');
+    }
+
+    nextPage(page:number, totalPages:number, msg:Message, message:Message, connection:VoiceConnection):Promise<MessageReaction> {
+        const next_filter = (reaction, user) => (
+            (
+                !user.bot &&
+                reaction.emoji.name == '➡'
+            )
+        );
+        msg.createReactionCollector(next_filter).on('collect', () => {
+            msg.delete(0);
+            this.handle(`${page+1}`, message, connection);
+        });
+        return msg.react('➡');
+    }
+
+    lastPage(page:number, totalPages:number, msg:Message, message:Message, connection:VoiceConnection):Promise<MessageReaction> {
+        const last_page_filter = (reaction, user) => (
+            (
+                !user.bot &&
+                reaction.emoji.name == '⏭'
+            )
+        );
+        msg.createReactionCollector(last_page_filter).on('collect', () => {
+            msg.delete(0);
+            this.handle(`${totalPages}`, message, connection);
+        });
+
+        return msg.react('⏭');
     }
 }

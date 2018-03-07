@@ -248,4 +248,24 @@ export default class VoiceConnection
         }) != null;
     }
 
+    move(oldIndex:number, newIndex:number):boolean {
+        if( this.queue.length <= 0 )
+            return false;
+
+        while (oldIndex < 0) {
+            oldIndex += this.queue.length;
+        }
+        while (newIndex < 0) {
+            newIndex += this.queue.length;
+        }
+        if (newIndex >= this.queue.length) {
+            let k = newIndex - this.queue.length;
+            while ((k--) + 1) {
+                this.queue.push(undefined);
+            }
+        }
+        this.queue.splice(newIndex, 0, this.queue.splice(oldIndex, 1)[0]);
+        return true;
+    }
+
 }

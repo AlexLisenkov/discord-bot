@@ -32,6 +32,7 @@ SetDJCommandCommand.availableCommands = [
     'dj require',
     'dj role',
     'forceplay',
+    'move',
     'mute',
     'nickname',
     'np',

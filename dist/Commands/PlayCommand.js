@@ -20,8 +20,13 @@ class PlayCommand extends Command_1.default {
                 message.reply(`The query resulted in a playlist of ${result.length} songs, please react with ✅ within ${Config_1.default.message_lifetime / 1000} seconds to confirm.`)
                     .then((msg) => {
                     msg.react('✅');
-                    const filter = (reaction, user) => !user.bot && reaction.emoji.name === '✅' && (user.id === message.author.id || user.permissions.has('ADMINISTRATOR') || user.roles.exists('id', connection.djRole));
-                    msg.awaitReactions(filter, { time: 1000 }).then(() => {
+                    const filter = (reaction, user) => ((!user.bot &&
+                        reaction.emoji.name == '✅') &&
+                        (user.id == message.author.id ||
+                            user.permissions.has('ADMINISTRATOR') ||
+                            user.roles.exists('id', connection.djRole)));
+                    const reactionCollector = msg.createReactionCollector(filter);
+                    reactionCollector.on('collect', () => {
                         connection.channel.send(`Loaded ${result.length} songs from playlist`).then((msg) => {
                             msg.delete(Config_1.default.message_lifetime);
                         });

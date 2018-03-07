@@ -27,6 +27,7 @@ export default class HelpCommand extends Command
 **${prefix}skip** *Skip current song*
 **${prefix}np** *Show the song that is currenty playing*
 **${prefix}remove** [index|range|user] *Remove a song from the playlist (hint: say '${prefix}queue' to see indexes)*
+**${prefix}move** [old index] [new index] *Move a songs from one index to another*
 **${prefix}volume** [0-100] *Set the volume*
 **${prefix}mute** *Mute me*
 **${prefix}unmute** *Unmute me*

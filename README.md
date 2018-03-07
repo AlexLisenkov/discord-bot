@@ -21,6 +21,7 @@ __Commands__ (prefixed with your defined prefix)
 * `np` Show the song that is currenty playing
 * `shuffle` Suffles the queue
 * `remove <index|range|user>` Remove a song from the playlist (index, range or mention a user)
+* `move <old index> <new index>` Move a songs from one index to another
 * `volume <0-100>` Set the volume
 * `mute` Mute the bot
 * `unmute` Unmute the bot

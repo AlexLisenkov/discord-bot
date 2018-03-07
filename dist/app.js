@@ -28,6 +28,7 @@ const JoinCommand_1 = require("./Commands/JoinCommand");
 const SetPrefixCommand_1 = require("./Commands/SetPrefixCommand");
 const ForcePlayCommand_1 = require("./Commands/ForcePlayCommand");
 const ShuffleCommand_1 = require("./Commands/ShuffleCommand");
+const MoveCommand_1 = require("./Commands/MoveCommand");
 // Create instance
 Client_1.default.instance;
 // Log uncaught exceptions
@@ -63,6 +64,7 @@ new SetDJCommandCommand_1.default();
 new RemoveDJCommandCommand_1.default();
 new JoinCommand_1.default();
 new SetPrefixCommand_1.default();
+new MoveCommand_1.default();
 // HTTP server
 HTTPServer_1.default.instance;
 process.on('exit', () => {

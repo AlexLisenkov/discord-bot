@@ -26,6 +26,7 @@ import JoinCommand from "./Commands/JoinCommand";
 import SetPrefixCommand from "./Commands/SetPrefixCommand";
 import ForcePlayCommand from "./Commands/ForcePlayCommand";
 import ShuffleCommand from "./Commands/ShuffleCommand";
+import MoveCommand from "./Commands/MoveCommand";
 
 // Create instance
 Client.instance;
@@ -64,6 +65,7 @@ new SetDJCommandCommand();
 new RemoveDJCommandCommand();
 new JoinCommand();
 new SetPrefixCommand();
+new MoveCommand();
 
 // HTTP server
 HTTPServer.instance;

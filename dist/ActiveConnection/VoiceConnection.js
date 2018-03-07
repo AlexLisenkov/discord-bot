@@ -202,6 +202,24 @@ class VoiceConnection {
             return el == youtubeId;
         }) != null;
     }
+    move(oldIndex, newIndex) {
+        if (this.queue.length <= 0)
+            return false;
+        while (oldIndex < 0) {
+            oldIndex += this.queue.length;
+        }
+        while (newIndex < 0) {
+            newIndex += this.queue.length;
+        }
+        if (newIndex >= this.queue.length) {
+            let k = newIndex - this.queue.length;
+            while ((k--) + 1) {
+                this.queue.push(undefined);
+            }
+        }
+        this.queue.splice(newIndex, 0, this.queue.splice(oldIndex, 1)[0]);
+        return true;
+    }
 }
 exports.default = VoiceConnection;
 //# sourceMappingURL=VoiceConnection.js.map
