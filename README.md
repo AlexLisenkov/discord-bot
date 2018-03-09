@@ -1,6 +1,6 @@
 # Discord Music Bot
-[![Discord Bots](https://discordbots.org/api/widget/status/387686098534531076.svg?noavatar=true)](https://discordbots.org/bot/387686098534531076)[![Discord Bots](https://discordbots.org/api/widget/servers/387686098534531076.svg?noavatar=true)](https://discordbots.org/bot/387686098534531076)[![Discord Bots](https://discordbots.org/api/widget/upvotes/387686098534531076.svg?noavatar=true)](https://discordbots.org/bot/387686098534531076)
-An open-source TypeScript music bot for discord that runs on Node.
+[![Discord Bots](https://discordbots.org/api/widget/status/387686098534531076.svg?noavatar=true)](https://discordbots.org/bot/387686098534531076)[![Discord Bots](https://discordbots.org/api/widget/servers/387686098534531076.svg?noavatar=true)](https://discordbots.org/bot/387686098534531076)[![Discord Bots](https://discordbots.org/api/widget/upvotes/387686098534531076.svg?noavatar=true)](https://discordbots.org/bot/387686098534531076)<br/>
+<b>An open-source TypeScript music bot for discord that runs on Node.</b>
 
 Next to listening to music you also can:
 * Manage the **channels the bot can't join**
