@@ -18,7 +18,7 @@ class PlayCommand extends Command_1.default {
             }
             else {
                 const embed = {
-                    "description": "What would you like to do?\n\n✅ Queue up the playlist\n🔀 Shuffle and queue up the playlist\n🛑 To ignrore",
+                    "description": "What would you like to do?\n\n✅ Queue up the playlist\n🔀 Shuffle and queue up the playlist\n🛑 To ignore",
                     "url": "https://pleyr.net",
                     "footer": {
                         "text": `Authored by ${message.author.username}`

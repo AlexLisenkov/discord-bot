@@ -52,8 +52,6 @@ class VoiceConnection {
                 msg.delete(Config_1.default.message_lifetime);
             });
         }
-        if (this.voiceChannel == undefined)
-            console.error('wtf');
         if (!this.voiceChannel.connection)
             this.voiceChannel.join();
         const song = this.queue.shift();

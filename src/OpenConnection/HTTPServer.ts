@@ -2,6 +2,8 @@ import * as http from "http";
 import * as url from "url";
 import Config from "../Config/Config";
 import Client from "../ActiveConnection/Client";
+/// <reference path="../json-type.d.ts"/>
+import * as updateLog from "../../updateLog.json";
 
 export default class HTTPServer
 {
@@ -30,9 +32,14 @@ export default class HTTPServer
                     response.statusCode = 200;
                     response.end('OK');
                 }
-
                 if( queryString.pathname === '/sendEmbed' ) {
                     Client.sendEmbedToAllGuilds(JSON.parse(<string>queryString.query.embed).embed);
+                    response.statusCode = 200;
+                    response.end('OK');
+                }
+
+                if( queryString.pathname === '/sendUpdateMessage' ) {
+                    Client.sendEmbedToAllGuilds(updateLog);
                     response.statusCode = 200;
                     response.end('OK');
                 }

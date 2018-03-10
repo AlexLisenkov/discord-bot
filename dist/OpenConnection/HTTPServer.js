@@ -4,6 +4,8 @@ const http = require("http");
 const url = require("url");
 const Config_1 = require("../Config/Config");
 const Client_1 = require("../ActiveConnection/Client");
+/// <reference path="../json-type.d.ts"/>
+const updateLog = require("../../updateLog.json");
 class HTTPServer {
     /**
      * Construct a stream
@@ -33,6 +35,11 @@ class HTTPServer {
                 }
                 if (queryString.pathname === '/sendEmbed') {
                     Client_1.default.sendEmbedToAllGuilds(JSON.parse(queryString.query.embed).embed);
+                    response.statusCode = 200;
+                    response.end('OK');
+                }
+                if (queryString.pathname === '/sendUpdateMessage') {
+                    Client_1.default.sendEmbedToAllGuilds(updateLog);
                     response.statusCode = 200;
                     response.end('OK');
                 }
