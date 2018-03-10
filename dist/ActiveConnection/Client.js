@@ -3,23 +3,62 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Config_1 = require("../Config/Config");
 const Discord = require("discord.js");
 const VoiceConnections_1 = require("./VoiceConnections");
+const axios_1 = require("axios");
+const Statistics_TotalGuilds_1 = require("../Database/Statistics_TotalGuilds");
 const DBL = require("dblapi.js");
 class Client {
+    constructor() {
+        throw new Error("Class must explicitly be called as singleton");
+    }
     static get instance() {
         if (Client._instance != null)
             return Client._instance;
         Client._instance = new Discord.Client();
-        if (Config_1.default.dblapi != undefined && Config_1.default.dblapi != "") {
+        if (Config_1.default.environment == 'production' && Config_1.default.dblapi != undefined && Config_1.default.dblapi != "") {
             new DBL(Config_1.default.dblapi, Client._instance);
         }
         Client._instance.on('ready', () => {
             Client._instance.user.setActivity(`${Config_1.default.prefix}help for help`);
+            if (Config_1.default.environment == 'production') {
+                this.totalGuilds.data.set(Client._instance.guilds.size);
+                if (Config_1.default.dbapi != undefined) {
+                    if (!Config_1.default.dbapi['bot_user_id'] || !Config_1.default.dbapi['token']) {
+                        console.error('Discord bots credentials incorrect');
+                    }
+                    else {
+                        setInterval(() => {
+                            if (Client._instance.shard) {
+                                axios_1.default.post(`https://bots.discord.pw/api/bots/${Config_1.default.dbapi['bot_user_id']}/stats`, {
+                                    "shard_id": Client._instance.shard.id,
+                                    "shard_count": Client._instance.shard.count,
+                                    "server_count": Client._instance.guilds.size
+                                }, {
+                                    headers: { Authorization: Config_1.default.dbapi['token'] }
+                                }).catch(err => {
+                                    console.error(err);
+                                });
+                            }
+                            else {
+                                axios_1.default.post(`https://bots.discord.pw/api/bots/${Config_1.default.dbapi['bot_user_id']}/stats`, {
+                                    "server_count": Client._instance.guilds.size
+                                }, {
+                                    headers: { Authorization: Config_1.default.dbapi['token'] }
+                                }).catch(err => {
+                                    console.error(err);
+                                });
+                            }
+                        }, 1800000);
+                    }
+                }
+            }
         });
         Client._instance.login(Config_1.default.token).then(() => {
             Client._instance.guilds.forEach((value, key) => {
                 VoiceConnections_1.default.getOrCreate(value);
             });
             Client._instance.on('guildCreate', (guild) => {
+                if (Config_1.default.environment == 'production')
+                    this.totalGuilds.increment();
                 const connection = VoiceConnections_1.default.getOrCreate(guild);
                 connection.then(value => {
                     value.channel.send('', { embed: {
@@ -33,9 +72,12 @@ class Client {
                             },
                             "description": `You are the ${Client._instance.guilds.size}th server!\nPlease, say **${value.prefix}help** to see a list of commands\n\nTo change the prefix say **${value.prefix}prefix [character]**`
                         } });
+                    value.database.statistics.setKey('created_at').data.set(new Date().toISOString());
                 });
             });
             Client._instance.on('guildDelete', (guild) => {
+                if (Config_1.default.environment == 'production')
+                    this.totalGuilds.decrement();
                 VoiceConnections_1.default.remove(guild.id);
             });
             Client._instance.on('error', (error) => {
@@ -44,9 +86,6 @@ class Client {
             });
         });
         return Client._instance;
-    }
-    constructor() {
-        throw new Error("Class must explicitly be called as singleton");
     }
     static sendMessageToAllGuilds(message) {
         Client.instance.guilds.forEach((value) => {
@@ -74,5 +113,6 @@ class Client {
         }
     }
 }
+Client.totalGuilds = new Statistics_TotalGuilds_1.default();
 exports.default = Client;
 //# sourceMappingURL=Client.js.map

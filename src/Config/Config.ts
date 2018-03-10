@@ -11,4 +11,6 @@ export default abstract class Config
     public static firebase:object = (<any>configFile).firebase;
     public static message_lifetime:number = (<any>configFile).message_lifetime;
     public static dblapi:string = (<any>configFile).dblapi;
+    public static dbapi:object = (<any>configFile).dbapi;
+    public static environment:string = (<any>configFile).environment;
 }

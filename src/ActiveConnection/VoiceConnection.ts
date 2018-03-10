@@ -6,12 +6,19 @@ import {
 } from "discord.js";
 import Guild from "../Database/Guild";
 import Client from "./Client";
+import Statistics_TotalSongs from "../Database/Statistics_TotalSongs";
+import Statistics_TotalSeconds from "../Database/Statistics_TotalSeconds";
+import {type} from "os";
+import {Readable} from "stream";
+import Statistics_GuildSongs from "../Database/Statistics_GuildSongs";
+import Statistics_GuildSeconds from "../Database/Statistics_GuildSeconds";
 
 export default class VoiceConnection
 {
     public queue:Song[] = [];
     public dispatcher:StreamDispatcher;
     public currentSong:Song;
+    public timer:Date;
     public voiceChannel:VoiceChannel;
     public channel:TextChannel;
     public volumeBeforeMute:number;
@@ -22,8 +29,10 @@ export default class VoiceConnection
     public prefix:string = Config.prefix;
     public djCommands:Collection<string, string>;
     public blacklist:Collection<string, string>;
+    public statistics_totalSeconds:Statistics_TotalSeconds = new Statistics_TotalSeconds();
+    public statistics_totalSongs:Statistics_TotalSongs = new Statistics_TotalSongs();
     public disallowedVoiceChannels:Collection<string, string>;
-    protected disconnectAfter:number = 1000*60*2;
+    protected disconnectAfter:number = 1000*60*4;
 
     constructor( guild:DiscordGuild ) {
         this.database = new Guild(guild.id);
@@ -64,14 +73,16 @@ export default class VoiceConnection
                 msg.delete(Config.message_lifetime);
             });
         }
+
         if( !this.voiceChannel.connection )
             this.voiceChannel.join();
 
         const song = this.queue.shift();
 
+
         song.buffer();
         this.bufferNextSongStream();
-
+        song.stream;
         const embed =
             {
                 title: song.snippet.title,
@@ -92,23 +103,43 @@ export default class VoiceConnection
         this.channel.send('', {embed: embed}).then( (msg: Message) => {
             msg.delete(Config.message_lifetime);
         });
-
         try {
             this.dispatcher = this.voiceChannel.connection.playStream(
-                song.stream,
-                YoutubeConfig.default_stream_options
+                song.stream
             );
+            this.timer = new Date();
         } catch (error) {
             console.error(error.message);
         }
 
         this.currentSong = song;
+        const author_id = this.currentSong.author.id;
+        if( Config.environment == 'production') {
+            this.statistics_totalSongs.increment();
+            this.database.totalSongs.increment();
+            this.database.statistics.memberStatistics(author_id).incrementTotalSongs();
+            this.voiceChannel.members.forEach( member => {
+                if( !member.deaf && !member.user.bot)
+                    this.database.statistics.memberStatistics(member.id).incrementTotalSongsListened();
+            });
+        }
 
         this.dispatcher.on('end', () => {
             let timeout = setTimeout(() => {
                 this.currentSong = null;
+                if( Config.environment == 'production'){
+                    const totalTime = (<any>new Date() - <any>this.timer )/ 1000;
+                    this.statistics_totalSeconds.incrementWith(totalTime);
+                    this.database.totalSeconds.incrementWith(totalTime);
+                    this.database.statistics.memberStatistics(author_id).incrementTotalSecondsWith(totalTime);
+                    this.voiceChannel.members.forEach( member => {
+                        if( !member.deaf && !member.user.bot)
+                            this.database.statistics.memberStatistics(member.id).incrementTotalSecondsListenedWith(totalTime);
+                    });
+                }
+
                 if (this.queue.length > 0) {
-                    this.play()
+                    this.play();
                 } else {
                     this.triggered = false;
                     clearTimeout(timeout);
@@ -267,5 +298,17 @@ export default class VoiceConnection
         this.queue.splice(newIndex, 0, this.queue.splice(oldIndex, 1)[0]);
         return true;
     }
+
+    shuffle():boolean {
+        this.queue = <Song[]>this.arrayShuffle(this.queue);
+        this.bufferNextSongStream();
+        return true;
+    }
+
+    arrayShuffle( arr ):object {
+        return arr.map(a => [Math.random(), a])
+            .sort((a, b) => a[0] - b[0])
+            .map(a => a[1])
+    };
 
 }

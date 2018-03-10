@@ -22,7 +22,8 @@ class HelpCommand extends Command_1.default {
 **${prefix}resume** *Resume current song*
 **${prefix}queue [page]** *List queue, page command is optional*
 **${prefix}skip** *Skip current song*
-**${prefix}np** *Show the song that is currenty playing*
+**${prefix}np** *Show the song that is currently playing*
+**${prefix}shuffle** *Shuffles the queue*
 **${prefix}remove** [index|range|user] *Remove a song from the playlist (hint: say '${prefix}queue' to see indexes)*
 **${prefix}move** [old index] [new index] *Move a songs from one index to another*
 **${prefix}volume** [0-100] *Set the volume*

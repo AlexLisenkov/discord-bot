@@ -12,5 +12,7 @@ Config.queue_limit = configFile.queue_limit;
 Config.firebase = configFile.firebase;
 Config.message_lifetime = configFile.message_lifetime;
 Config.dblapi = configFile.dblapi;
+Config.dbapi = configFile.dbapi;
+Config.environment = configFile.environment;
 exports.default = Config;
 //# sourceMappingURL=Config.js.map

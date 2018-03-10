@@ -6,13 +6,17 @@ const Song_1 = require("../YouTube/Song");
 const discord_js_1 = require("discord.js");
 const Guild_1 = require("../Database/Guild");
 const Client_1 = require("./Client");
+const Statistics_TotalSongs_1 = require("../Database/Statistics_TotalSongs");
+const Statistics_TotalSeconds_1 = require("../Database/Statistics_TotalSeconds");
 class VoiceConnection {
     constructor(guild) {
         this.queue = [];
         this.triggered = false;
         this.isMuted = false;
         this.prefix = Config_1.default.prefix;
-        this.disconnectAfter = 1000 * 60 * 2;
+        this.statistics_totalSeconds = new Statistics_TotalSeconds_1.default();
+        this.statistics_totalSongs = new Statistics_TotalSongs_1.default();
+        this.disconnectAfter = 1000 * 60 * 4;
         this.database = new Guild_1.default(guild.id);
         this.channel = Client_1.default.getMessageableTextChannel(guild);
         this.database.guildConfig.setKey('prefix').data.on('value', value => {
@@ -48,11 +52,14 @@ class VoiceConnection {
                 msg.delete(Config_1.default.message_lifetime);
             });
         }
+        if (this.voiceChannel == undefined)
+            console.error('wtf');
         if (!this.voiceChannel.connection)
             this.voiceChannel.join();
         const song = this.queue.shift();
         song.buffer();
         this.bufferNextSongStream();
+        song.stream;
         const embed = {
             title: song.snippet.title,
             url: song.url,
@@ -72,15 +79,36 @@ class VoiceConnection {
             msg.delete(Config_1.default.message_lifetime);
         });
         try {
-            this.dispatcher = this.voiceChannel.connection.playStream(song.stream, YoutubeConfig_1.default.default_stream_options);
+            this.dispatcher = this.voiceChannel.connection.playStream(song.stream);
+            this.timer = new Date();
         }
         catch (error) {
             console.error(error.message);
         }
         this.currentSong = song;
+        const author_id = this.currentSong.author.id;
+        if (Config_1.default.environment == 'production') {
+            this.statistics_totalSongs.increment();
+            this.database.totalSongs.increment();
+            this.database.statistics.memberStatistics(author_id).incrementTotalSongs();
+            this.voiceChannel.members.forEach(member => {
+                if (!member.deaf && !member.user.bot)
+                    this.database.statistics.memberStatistics(member.id).incrementTotalSongsListened();
+            });
+        }
         this.dispatcher.on('end', () => {
             let timeout = setTimeout(() => {
                 this.currentSong = null;
+                if (Config_1.default.environment == 'production') {
+                    const totalTime = (new Date() - this.timer) / 1000;
+                    this.statistics_totalSeconds.incrementWith(totalTime);
+                    this.database.totalSeconds.incrementWith(totalTime);
+                    this.database.statistics.memberStatistics(author_id).incrementTotalSecondsWith(totalTime);
+                    this.voiceChannel.members.forEach(member => {
+                        if (!member.deaf && !member.user.bot)
+                            this.database.statistics.memberStatistics(member.id).incrementTotalSecondsListenedWith(totalTime);
+                    });
+                }
                 if (this.queue.length > 0) {
                     this.play();
                 }
@@ -220,6 +248,17 @@ class VoiceConnection {
         this.queue.splice(newIndex, 0, this.queue.splice(oldIndex, 1)[0]);
         return true;
     }
+    shuffle() {
+        this.queue = this.arrayShuffle(this.queue);
+        this.bufferNextSongStream();
+        return true;
+    }
+    arrayShuffle(arr) {
+        return arr.map(a => [Math.random(), a])
+            .sort((a, b) => a[0] - b[0])
+            .map(a => a[1]);
+    }
+    ;
 }
 exports.default = VoiceConnection;
 //# sourceMappingURL=VoiceConnection.js.map

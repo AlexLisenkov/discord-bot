@@ -23,21 +23,22 @@
   },
   "dependencies": {
     "axios": "^0.17.1",
-    "dblapi.js": "^1.1.0",
-    "discord.js": "^11.3.0",
-    "ffmpeg-binaries": "^3.2.2-3",
-    "firebase": "^4.10.0",
+    "bufferutil": "^3.0.3",
+    "dblapi.js": "^1.1.1",
+    "discord.js": "^11.3.2",
+    "ffmpeg-binaries": "^3.2.2",
+    "firebase": "^4.11.0",
     "gulp": "^4.0.0",
-    "node-opus": "^0.2.7",
-    "ytdl-core": "^0.20.1",
-    "snyk": "^1.69.7"
+    "opusscript": "0.0.6",
+    "snyk": "^1.69.11",
+    "ytdl-core": "^0.20.2"
   },
   "engines": {
     "node": ">=8.9.4"
   },
   "devDependencies": {
-    "@types/node": "^9.4.6",
-    "typescript": "^2.7.1"
+    "@types/node": "^9.4.7",
+    "typescript": "^2.7.2"
   },
   "snyk": true
 }

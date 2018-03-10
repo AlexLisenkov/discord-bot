@@ -6,9 +6,11 @@ export default class AbstractModel implements AbstractInterface
 {
     public ref: string;
     public identifier: string|Snowflake;
+    public staticKey: string;
+    public global: boolean = false;
     private key: string = '';
 
-    public constructor(identifier: string|Snowflake) {
+    public constructor(identifier: string|Snowflake = '') {
         this.identifier = identifier;
     }
 
@@ -17,11 +19,21 @@ export default class AbstractModel implements AbstractInterface
         return this;
     }
 
-    get data(): firebase.database.Reference {
-        let ref = `${this.ref}/${this.identifier}`;
+    public getRef():string {
+        let ref = '';
+        if(this.global)
+            ref = `${this.ref}`;
+        else
+            ref = `${this.ref}/${this.identifier}`;
+        if(this.staticKey)
+            ref += `/${this.staticKey}`;
         if( this.key != '' )
             ref += `/${this.key}`;
         this.key = '';
-        return Firebase.database.ref(ref);
+        return ref;
+    }
+
+    get data(): firebase.database.Reference {
+        return Firebase.database.ref(this.getRef());
     }
 }

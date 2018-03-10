@@ -11,12 +11,9 @@ class ShuffleCommand extends Command_1.default {
             message.reply('There\'s no queue 🙁, type in \'*' + connection.prefix + 'play [song title]*\' to start');
             return null;
         }
-        for (let i = connection.queue.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [connection.queue[i], connection.queue[j]] = [connection.queue[j], connection.queue[i]];
-        }
+        connection.shuffle();
         const reply = {
-            title: `🔀 Songs are shuffled`,
+            title: `🔀 Songs shuffled`,
             footer: {
                 'text': `Shuffled by ${message.author.username}`
             }
