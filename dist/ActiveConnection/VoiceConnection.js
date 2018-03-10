@@ -142,6 +142,7 @@ class VoiceConnection {
     skip() {
         if (this.dispatcher.paused)
             this.resume();
+        this.triggered = false;
         this.dispatcher.end();
     }
     removeIndex(index) {

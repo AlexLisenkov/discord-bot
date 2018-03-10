@@ -178,6 +178,7 @@ export default class VoiceConnection
     skip():void {
         if( this.dispatcher.paused )
             this.resume();
+        this.triggered = false;
         this.dispatcher.end();
     }
 
