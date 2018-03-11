@@ -28,9 +28,9 @@ export default class StatisticsCommand extends Command
                         } else {
                             const personal_statistics = guild_statistics.members[message.author.id];
                             if( !personal_statistics ){
-                                embed.addField(`You (${message.author.username})`, 'There are no statistics 💩');
+                                embed.addField(`🙍 You (${message.author.username})`, 'There are no statistics 💩');
                             } else {
-                                embed.addField(`You (${message.author.username})`, 'Songs listened\nOf which you queued\nTotal playtime\nOf which you queued', true);
+                                embed.addField(`🙍 You (${message.author.username})`, 'Songs listened\nOf which you queued\nTotal playtime\nOf which you queued', true);
                                 embed.addField('_ ', `${personal_statistics.total_songs_listened}\n${personal_statistics.total_songs_queued}\n${this.convertSeconds(personal_statistics.total_seconds_listened)}\n${this.convertSeconds(personal_statistics.total_seconds_queued)}`, true)
                             }
                         }
