@@ -5,6 +5,7 @@ const Discord = require("discord.js");
 const VoiceConnections_1 = require("./VoiceConnections");
 const axios_1 = require("axios");
 const Statistics_TotalGuilds_1 = require("../Database/Statistics_TotalGuilds");
+const Statistics_Global_1 = require("../Database/Statistics_Global");
 const DBL = require("dblapi.js");
 class Client {
     constructor() {
@@ -15,7 +16,7 @@ class Client {
             return Client._instance;
         Client._instance = new Discord.Client();
         if (Config_1.default.environment == 'production' && Config_1.default.dblapi != undefined && Config_1.default.dblapi != "") {
-            new DBL(Config_1.default.dblapi, Client._instance);
+            this.dbl = new DBL(Config_1.default.dblapi, Client._instance);
         }
         Client._instance.on('ready', () => {
             Client._instance.user.setActivity(`${Config_1.default.prefix}help for help`);
@@ -114,5 +115,6 @@ class Client {
     }
 }
 Client.totalGuilds = new Statistics_TotalGuilds_1.default();
+Client.statistics = new Statistics_Global_1.default();
 exports.default = Client;
 //# sourceMappingURL=Client.js.map

@@ -4,12 +4,15 @@ import {Guild, GuildChannel, TextChannel} from "discord.js";
 import VoiceConnections from "./VoiceConnections";
 import axios from "axios";
 import Statistics_TotalGuilds from "../Database/Statistics_TotalGuilds";
+import Statistics_Global from "../Database/Statistics_Global";
 const DBL = require("dblapi.js");
 
 export default class Client
 {
     private static _instance: Discord.Client;
     public static totalGuilds: Statistics_TotalGuilds = new Statistics_TotalGuilds();
+    public static statistics: Statistics_Global = new Statistics_Global();
+    public static dbl;
 
     public static get instance(): Discord.Client {
         if( Client._instance != null )
@@ -17,7 +20,7 @@ export default class Client
         Client._instance = new Discord.Client();
 
         if(Config.environment == 'production' && Config.dblapi != undefined && Config.dblapi != ""){
-            new DBL(Config.dblapi, Client._instance);
+            this.dbl = new DBL(Config.dblapi, Client._instance);
         }
 
         Client._instance.on('ready', () => {

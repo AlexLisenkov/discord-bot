@@ -27,6 +27,7 @@ __Commands__ (prefixed with your defined prefix)
 * `unmute` Unmute the bot
 * `clearqueue` Clears queue and stops playing
 * `disconnect` Disconnect bot from channel and clear queue
+* `statistics` See global, server and personal statistics
 * `blacklist show` Lists blacklisted YouTube ids
 * `voicechannel show` Lists blocked voice channels for the bot
 
