@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Command_1 = require("./Command");
 const discord_js_1 = require("discord.js");
 const Client_1 = require("../ActiveConnection/Client");
+const Config_1 = require("../Config/Config");
 class StatisticsCommand extends Command_1.default {
     constructor() {
         super(...arguments);
@@ -36,11 +37,14 @@ class StatisticsCommand extends Command_1.default {
                                 embed.addField('_ ', `${personal_statistics.total_songs_listened}\n${personal_statistics.total_songs_queued}\n${this.convertSeconds(personal_statistics.total_seconds_listened)}\n${this.convertSeconds(personal_statistics.total_seconds_queued)}`, true);
                             }
                         }
+                        embed.addBlankField(true);
                         connection.channel.sendEmbed(embed);
                     });
                 }
                 else {
-                    connection.channel.sendEmbed(embed);
+                    connection.channel.sendEmbed(embed).then(msg => {
+                        msg.delete(Config_1.default.message_lifetime);
+                    });
                 }
             });
         });
