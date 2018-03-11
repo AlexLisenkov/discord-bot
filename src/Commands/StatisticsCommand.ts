@@ -2,6 +2,7 @@ import Command from "./Command";
 import {Message, RichEmbed} from "discord.js";
 import VoiceConnection from "../ActiveConnection/VoiceConnection";
 import Client from "../ActiveConnection/Client";
+import Config from "../Config/Config";
 
 export default class StatisticsCommand extends Command
 {
@@ -34,10 +35,13 @@ export default class StatisticsCommand extends Command
                                 embed.addField('_ ', `${personal_statistics.total_songs_listened}\n${personal_statistics.total_songs_queued}\n${this.convertSeconds(personal_statistics.total_seconds_listened)}\n${this.convertSeconds(personal_statistics.total_seconds_queued)}`, true)
                             }
                         }
+                        embed.addBlankField(true);
                         connection.channel.sendEmbed(embed);
                     });
                 } else {
-                    connection.channel.sendEmbed(embed);
+                    connection.channel.sendEmbed(embed).then( msg => {
+                        msg.delete(Config.message_lifetime);
+                    } );
                 }
             });
         });
