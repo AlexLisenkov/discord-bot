@@ -5,6 +5,7 @@ import VoiceConnections from "./VoiceConnections";
 import axios from "axios";
 import Statistics_TotalGuilds from "../Database/Statistics_TotalGuilds";
 import Statistics_Global from "../Database/Statistics_Global";
+import VoiceConnection from "./VoiceConnection";
 const DBL = require("dblapi.js");
 
 export default class Client
@@ -27,37 +28,12 @@ export default class Client
             Client._instance.user.setActivity(`${Config.prefix}help for help`);
             if( Config.environment == 'production' ) {
                 this.totalGuilds.data.set(Client._instance.guilds.size);
-
-                if (Config.dbapi != undefined) {
-                    if (!Config.dbapi['bot_user_id'] || !Config.dbapi['token']) {
-                        console.error('Discord bots credentials incorrect');
-                    } else {
-                        setInterval(() => {
-                            if (Client._instance.shard) {
-                                axios.post(`https://bots.discord.pw/api/bots/${Config.dbapi['bot_user_id']}/stats`,
-                                    {
-                                        "shard_id": Client._instance.shard.id,
-                                        "shard_count": Client._instance.shard.count,
-                                        "server_count": Client._instance.guilds.size
-                                    }, {
-                                        headers: {Authorization: Config.dbapi['token']}
-                                    }).catch(err => {
-                                    console.error(err);
-                                });
-                            } else {
-                                axios.post(`https://bots.discord.pw/api/bots/${Config.dbapi['bot_user_id']}/stats`,
-                                    {
-                                        "server_count": Client._instance.guilds.size
-                                    }, {
-                                        headers: {Authorization: Config.dbapi['token']}
-                                    }).catch(err => {
-                                    console.error(err);
-                                });
-                            }
-                        }, 1800000);
-
-                    }
-                }
+                setInterval(() => {
+                    Client.sendDBApi();
+                    Client.sendDiscordList();
+                    Client.sendDiscordServices();
+                    Client.sendBotListSpace();
+                }, 1800000);
             }
         });
 
@@ -104,6 +80,12 @@ export default class Client
         throw new Error("Class must explicitly be called as singleton");
     }
 
+    public static disconnectEveryone():void {
+        const guilds = VoiceConnections.getGuilds();
+        for ( let guildId in guilds )
+            guilds[guildId].disconnect();
+    }
+
     public static sendMessageToAllGuilds(message: string|string[]):void {
         Client.instance.guilds.forEach( (value: Guild) => {
             Client.getMessageableTextChannel(value).send(message);
@@ -132,6 +114,76 @@ export default class Client
                 return <TextChannel>channel;
             }
         }
+    }
+
+    public static sendDBApi():void {
+        if (Config.dbapi != undefined)
+            return null;
+        if (!Config.dbapi['bot_user_id'] || !Config.dbapi['token'])
+            return null;
+
+        if (Client._instance.shard) {
+            axios.post(`https://bots.discord.pw/api/bots/${Config.dbapi['bot_user_id']}/stats`,
+                {
+                    "shard_id": Client._instance.shard.id,
+                    "shard_count": Client._instance.shard.count,
+                    "server_count": Client._instance.guilds.size
+                }, {
+                    headers: {Authorization: Config.dbapi['token']}
+                }).catch(err => {
+                console.error(err);
+            });
+        } else {
+            axios.post(`https://bots.discord.pw/api/bots/${Config.dbapi['bot_user_id']}/stats`,
+                {
+                    "server_count": Client._instance.guilds.size
+                }, {
+                    headers: {Authorization: Config.dbapi['token']}
+                }).catch(err => {
+                console.error(err);
+            });
+        }
+    }
+
+    public static sendDiscordList():void {
+        if( Config.discordlist == undefined )
+            return null;
+        axios.post('https://bots.discordlist.net/api',
+            {
+                "servers": Client._instance.guilds.size
+            }, {
+                headers: {token: Config.discordlist}
+            }).catch(err => {
+            console.error(err);
+        });
+    }
+
+    public static sendDiscordServices():void {
+        if( Config.discordservices == undefined )
+            return null;
+        axios.post(`https://discord.services/api/bots/${Client.instance.user.id}`,
+            {
+                "guild_count": Client._instance.guilds.size
+            }, {
+                headers: {Authorization: Config.discordservices}
+            }).catch(err => {
+            console.error(err);
+        });
+    }
+
+    public static sendBotListSpace():void {
+        if( Config.botlistspace == undefined )
+            return null;
+        if (!Config.botlistspace['token'])
+            return null;
+        axios.post(`https://botlist.space/api/bots/${Client.instance.user.id}`,
+            {
+                "servers": Client._instance.guilds.size
+            }, {
+                headers: {Authorization: Config.botlistspace}
+            }).catch(err => {
+            console.error(err);
+        });
     }
 
 }

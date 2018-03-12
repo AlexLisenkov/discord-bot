@@ -28,9 +28,9 @@ export default class PlayCommand extends Command
                             "url": "https://pleyr.net"
                         }
                     };
-                //`The query resulted in a playlist of ${result.length} songs, please react with ✅ within ${Config.message_lifetime/1000} seconds to confirm.`
                 connection.channel.send('', {embed: embed})
                 .then( (msg: Message) => {
+                    let hasReacted = false;
                     msg.react('✅').then( () => {
                         msg.react('🔀').then( () => {
                             msg.react('🛑');
@@ -39,7 +39,8 @@ export default class PlayCommand extends Command
                     const ingoreFilter = (reaction, user) => (
                         (
                             !user.bot &&
-                            reaction.emoji.name == '🛑'
+                            reaction.emoji.name == '🛑' &&
+                            !hasReacted
                         ) &&
                         (
                             user.id == message.author.id ||
@@ -50,12 +51,14 @@ export default class PlayCommand extends Command
                     const removeMessageReaction = msg.createReactionCollector(ingoreFilter);
 
                     removeMessageReaction.on('collect', (reaction) => {
+                        hasReacted = true;
                         msg.delete();
                     });
 
                     const filter = (reaction, user) => (
                         (
                             !user.bot &&
+                            !hasReacted &&
                             (reaction.emoji.name == '✅' ||
                             reaction.emoji.name == '🔀' )
                         ) &&
@@ -68,6 +71,7 @@ export default class PlayCommand extends Command
                     const reactionCollector = msg.createReactionCollector(filter);
 
                     reactionCollector.on('collect', (reaction) => {
+                        hasReacted = true;
                         connection.channel.send(`Loaded ${result.length} songs from playlist`).then((msg: Message) => {
                             msg.delete(Config.message_lifetime);
                         });

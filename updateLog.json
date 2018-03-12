@@ -5,11 +5,11 @@
     "name": "What's new?",
     "url": "https://pleyr.net"
   },
-  "description": "Version 0.4.4",
+  "description": "Version 0.4.5",
   "fields": [
     {
-      "name": "Statistics",
-      "value": "Use the `statistics` command to see global, server and your personal statistics."
+      "name": "Stability update",
+      "value": "`Statistics` command showed incorrect time.\nChanged to opusscript\nAdded missing command to help\nRemove command with single index bugfix"
     }
   ]
 }

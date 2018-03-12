@@ -24,8 +24,8 @@ class RemoveCommand extends Command_1.default {
             });
             return null;
         }
-        const song = connection.queue[index];
-        connection.removeIndex(index);
+        const song = connection.queue[index - 1];
+        connection.removeIndex(index - 1);
         const reply = {
             color: 0xf45342,
             title: song.snippet.title,

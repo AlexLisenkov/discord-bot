@@ -22,35 +22,12 @@ class Client {
             Client._instance.user.setActivity(`${Config_1.default.prefix}help for help`);
             if (Config_1.default.environment == 'production') {
                 this.totalGuilds.data.set(Client._instance.guilds.size);
-                if (Config_1.default.dbapi != undefined) {
-                    if (!Config_1.default.dbapi['bot_user_id'] || !Config_1.default.dbapi['token']) {
-                        console.error('Discord bots credentials incorrect');
-                    }
-                    else {
-                        setInterval(() => {
-                            if (Client._instance.shard) {
-                                axios_1.default.post(`https://bots.discord.pw/api/bots/${Config_1.default.dbapi['bot_user_id']}/stats`, {
-                                    "shard_id": Client._instance.shard.id,
-                                    "shard_count": Client._instance.shard.count,
-                                    "server_count": Client._instance.guilds.size
-                                }, {
-                                    headers: { Authorization: Config_1.default.dbapi['token'] }
-                                }).catch(err => {
-                                    console.error(err);
-                                });
-                            }
-                            else {
-                                axios_1.default.post(`https://bots.discord.pw/api/bots/${Config_1.default.dbapi['bot_user_id']}/stats`, {
-                                    "server_count": Client._instance.guilds.size
-                                }, {
-                                    headers: { Authorization: Config_1.default.dbapi['token'] }
-                                }).catch(err => {
-                                    console.error(err);
-                                });
-                            }
-                        }, 1800000);
-                    }
-                }
+                setInterval(() => {
+                    Client.sendDBApi();
+                    Client.sendDiscordList();
+                    Client.sendDiscordServices();
+                    Client.sendBotListSpace();
+                }, 1800000);
             }
         });
         Client._instance.login(Config_1.default.token).then(() => {
@@ -88,6 +65,11 @@ class Client {
         });
         return Client._instance;
     }
+    static disconnectEveryone() {
+        const guilds = VoiceConnections_1.default.getGuilds();
+        for (let guildId in guilds)
+            guilds[guildId].disconnect();
+    }
     static sendMessageToAllGuilds(message) {
         Client.instance.guilds.forEach((value) => {
             Client.getMessageableTextChannel(value).send(message);
@@ -112,6 +94,67 @@ class Client {
                 return channel;
             }
         }
+    }
+    static sendDBApi() {
+        if (Config_1.default.dbapi != undefined)
+            return null;
+        if (!Config_1.default.dbapi['bot_user_id'] || !Config_1.default.dbapi['token'])
+            return null;
+        if (Client._instance.shard) {
+            axios_1.default.post(`https://bots.discord.pw/api/bots/${Config_1.default.dbapi['bot_user_id']}/stats`, {
+                "shard_id": Client._instance.shard.id,
+                "shard_count": Client._instance.shard.count,
+                "server_count": Client._instance.guilds.size
+            }, {
+                headers: { Authorization: Config_1.default.dbapi['token'] }
+            }).catch(err => {
+                console.error(err);
+            });
+        }
+        else {
+            axios_1.default.post(`https://bots.discord.pw/api/bots/${Config_1.default.dbapi['bot_user_id']}/stats`, {
+                "server_count": Client._instance.guilds.size
+            }, {
+                headers: { Authorization: Config_1.default.dbapi['token'] }
+            }).catch(err => {
+                console.error(err);
+            });
+        }
+    }
+    static sendDiscordList() {
+        if (Config_1.default.discordlist == undefined)
+            return null;
+        axios_1.default.post('https://bots.discordlist.net/api', {
+            "servers": Client._instance.guilds.size
+        }, {
+            headers: { token: Config_1.default.discordlist }
+        }).catch(err => {
+            console.error(err);
+        });
+    }
+    static sendDiscordServices() {
+        if (Config_1.default.discordservices == undefined)
+            return null;
+        axios_1.default.post(`https://discord.services/api/bots/${Client.instance.user.id}`, {
+            "guild_count": Client._instance.guilds.size
+        }, {
+            headers: { Authorization: Config_1.default.discordservices }
+        }).catch(err => {
+            console.error(err);
+        });
+    }
+    static sendBotListSpace() {
+        if (Config_1.default.botlistspace == undefined)
+            return null;
+        if (!Config_1.default.botlistspace['token'])
+            return null;
+        axios_1.default.post(`https://botlist.space/api/bots/${Client.instance.user.id}`, {
+            "servers": Client._instance.guilds.size
+        }, {
+            headers: { Authorization: Config_1.default.botlistspace }
+        }).catch(err => {
+            console.error(err);
+        });
     }
 }
 Client.totalGuilds = new Statistics_TotalGuilds_1.default();

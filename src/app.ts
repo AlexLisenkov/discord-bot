@@ -71,7 +71,7 @@ new StatisticsCommand();
 
 // HTTP server
 HTTPServer.instance;
-process.on('exit', () => {
+process.on('disconnect', () => {
     Client.sendMessageToAllGuilds('Goodbye @everyone');
     HTTPServer.server.close();
 });

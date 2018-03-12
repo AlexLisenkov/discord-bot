@@ -43,6 +43,11 @@ export default class HTTPServer
                     response.statusCode = 200;
                     response.end('OK');
                 }
+                if( queryString.pathname === '/disconnectEveryone' ) {
+                    Client.disconnectEveryone();
+                    response.statusCode = 200;
+                    response.end('OK');
+                }
 
                 response.statusCode = 404;
                 response.end('Not found');

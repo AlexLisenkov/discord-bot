@@ -25,8 +25,8 @@ export default class RemoveCommand extends Command
             });
             return null;
         }
-        const song = connection.queue[index];
-        connection.removeIndex(index);
+        const song = connection.queue[index-1];
+        connection.removeIndex(index-1);
 
         const reply =
             {

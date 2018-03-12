@@ -12,6 +12,7 @@ import {type} from "os";
 import {Readable} from "stream";
 import Statistics_GuildSongs from "../Database/Statistics_GuildSongs";
 import Statistics_GuildSeconds from "../Database/Statistics_GuildSeconds";
+import Statistics_TotalPlaying from "../Database/Statistics_TotalPlaying";
 
 export default class VoiceConnection
 {
@@ -31,6 +32,7 @@ export default class VoiceConnection
     public blacklist:Collection<string, string>;
     public statistics_totalSeconds:Statistics_TotalSeconds = new Statistics_TotalSeconds();
     public statistics_totalSongs:Statistics_TotalSongs = new Statistics_TotalSongs();
+    public statistic_totalPlaying:Statistics_TotalPlaying = new Statistics_TotalPlaying();
     public disallowedVoiceChannels:Collection<string, string>;
     protected disconnectAfter:number = 1000*60*4;
 
@@ -115,6 +117,7 @@ export default class VoiceConnection
         this.currentSong = song;
         const author_id = this.currentSong.author.id;
         if( Config.environment == 'production') {
+            this.statistic_totalPlaying.increment();
             this.statistics_totalSongs.increment();
             this.database.totalSongs.increment();
             this.database.statistics.memberStatistics(author_id).incrementTotalSongs();
@@ -129,6 +132,7 @@ export default class VoiceConnection
                 this.currentSong = null;
                 if( Config.environment == 'production'){
                     const totalTime = (<any>new Date() - <any>this.timer )/ 1000;
+                    this.statistic_totalPlaying.decrement();
                     this.statistics_totalSeconds.incrementWith(totalTime);
                     this.database.totalSeconds.incrementWith(totalTime);
                     this.database.statistics.memberStatistics(author_id).incrementTotalSecondsWith(totalTime);

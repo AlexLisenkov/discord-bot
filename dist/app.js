@@ -69,7 +69,7 @@ new MoveCommand_1.default();
 new StatisticsCommand_1.default();
 // HTTP server
 HTTPServer_1.default.instance;
-process.on('exit', () => {
+process.on('disconnect', () => {
     Client_1.default.sendMessageToAllGuilds('Goodbye @everyone');
     HTTPServer_1.default.server.close();
 });

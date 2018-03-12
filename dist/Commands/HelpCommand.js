@@ -30,6 +30,7 @@ class HelpCommand extends Command_1.default {
 **${prefix}mute** *Mute me*
 **${prefix}unmute** *Unmute me*
 **${prefix}clearqueue** *Clears queue and stops playing*
+**${prefix}statistics** *Show statistics of you, the server and globally*
 **${prefix}disconnect** *Disconnect the bot*
 **${prefix}blacklist show** *Lists blacklisted YouTube ids*
 **${prefix}voicechannel show** *Lists blocked voice channels for the bot*

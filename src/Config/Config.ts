@@ -12,5 +12,8 @@ export default abstract class Config
     public static message_lifetime:number = (<any>configFile).message_lifetime;
     public static dblapi:string = (<any>configFile).dblapi;
     public static dbapi:object = (<any>configFile).dbapi;
+    public static discordlist:string = (<any>configFile).discordlist;
+    public static discordservices:string = (<any>configFile).discordservices;
+    public static botlistspace:string = (<any>configFile).botlistspace;
     public static environment:string = (<any>configFile).environment;
 }

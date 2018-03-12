@@ -8,6 +8,7 @@ const Guild_1 = require("../Database/Guild");
 const Client_1 = require("./Client");
 const Statistics_TotalSongs_1 = require("../Database/Statistics_TotalSongs");
 const Statistics_TotalSeconds_1 = require("../Database/Statistics_TotalSeconds");
+const Statistics_TotalPlaying_1 = require("../Database/Statistics_TotalPlaying");
 class VoiceConnection {
     constructor(guild) {
         this.queue = [];
@@ -16,6 +17,7 @@ class VoiceConnection {
         this.prefix = Config_1.default.prefix;
         this.statistics_totalSeconds = new Statistics_TotalSeconds_1.default();
         this.statistics_totalSongs = new Statistics_TotalSongs_1.default();
+        this.statistic_totalPlaying = new Statistics_TotalPlaying_1.default();
         this.disconnectAfter = 1000 * 60 * 4;
         this.database = new Guild_1.default(guild.id);
         this.channel = Client_1.default.getMessageableTextChannel(guild);
@@ -86,6 +88,7 @@ class VoiceConnection {
         this.currentSong = song;
         const author_id = this.currentSong.author.id;
         if (Config_1.default.environment == 'production') {
+            this.statistic_totalPlaying.increment();
             this.statistics_totalSongs.increment();
             this.database.totalSongs.increment();
             this.database.statistics.memberStatistics(author_id).incrementTotalSongs();
@@ -99,6 +102,7 @@ class VoiceConnection {
                 this.currentSong = null;
                 if (Config_1.default.environment == 'production') {
                     const totalTime = (new Date() - this.timer) / 1000;
+                    this.statistic_totalPlaying.decrement();
                     this.statistics_totalSeconds.incrementWith(totalTime);
                     this.database.totalSeconds.incrementWith(totalTime);
                     this.database.statistics.memberStatistics(author_id).incrementTotalSecondsWith(totalTime);
