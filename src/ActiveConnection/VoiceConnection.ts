@@ -107,7 +107,8 @@ export default class VoiceConnection
         });
         try {
             this.dispatcher = this.voiceChannel.connection.playStream(
-                song.stream
+                song.stream,
+                YoutubeConfig.default_stream_options
             );
             this.timer = new Date();
         } catch (error) {
