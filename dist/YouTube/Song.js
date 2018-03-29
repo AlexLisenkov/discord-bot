@@ -38,8 +38,9 @@ class Song {
      * @return {Readable}
      */
     get stream() {
-        if (this._stream == undefined)
-            this._stream = YouTube_1.default.getDataStream(this.youtubeId, this.begin);
+        if (this._stream == undefined) {
+            this._stream = YouTube_1.default.getDataStream(this.youtubeId);
+        }
         return this._stream;
     }
     buffer() {

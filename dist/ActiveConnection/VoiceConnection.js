@@ -57,9 +57,7 @@ class VoiceConnection {
         if (!this.voiceChannel.connection)
             this.voiceChannel.join();
         const song = this.queue.shift();
-        song.buffer();
         this.bufferNextSongStream();
-        song.stream;
         const embed = {
             title: song.snippet.title,
             url: song.url,

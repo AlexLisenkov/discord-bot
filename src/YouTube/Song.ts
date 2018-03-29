@@ -46,9 +46,10 @@ export default class Song
      * @return {Readable}
      */
     get stream():Readable {
-        if( this._stream == undefined )
-            this._stream = YouTube.getDataStream(this.youtubeId, this.begin);
-        return this._stream
+        if( this._stream == undefined ) {
+            this._stream = YouTube.getDataStream(this.youtubeId);
+        }
+        return this._stream;
     }
 
     public buffer():void {

@@ -110,8 +110,8 @@ export default class YouTube
      *
      * @return {ReadableStream}
      */
-    static getDataStream( videoId:string, begin:string = '0s' ):Readable {
-        return ytdl(`${YouTube.WATCH_VIDEO_URL}${videoId}&t=${begin}`, {filter: 'audioonly'});
+    static getDataStream( videoId:string ):Readable {
+        return ytdl(`${YouTube.WATCH_VIDEO_URL}${videoId}`, {filter: 'audioonly'});
     }
 
     constructor() {

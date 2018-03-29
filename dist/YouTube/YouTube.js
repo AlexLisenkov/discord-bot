@@ -95,8 +95,8 @@ class YouTube {
      *
      * @return {ReadableStream}
      */
-    static getDataStream(videoId, begin = '0s') {
-        return ytdl(`${YouTube.WATCH_VIDEO_URL}${videoId}&t=${begin}`, { filter: 'audioonly' });
+    static getDataStream(videoId) {
+        return ytdl(`${YouTube.WATCH_VIDEO_URL}${videoId}`, { filter: 'audioonly' });
     }
     constructor() {
         throw "Class YouTube must explicitly be called statically";

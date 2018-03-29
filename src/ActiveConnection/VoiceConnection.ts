@@ -80,11 +80,8 @@ export default class VoiceConnection
             this.voiceChannel.join();
 
         const song = this.queue.shift();
-
-
-        song.buffer();
         this.bufferNextSongStream();
-        song.stream;
+
         const embed =
             {
                 title: song.snippet.title,
