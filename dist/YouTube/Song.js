@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const YouTube_1 = require("./YouTube");
+const stream_1 = require("stream");
 class Song {
     /**
      * Construct a new Song
@@ -38,13 +39,13 @@ class Song {
      * @return {Readable}
      */
     get stream() {
-        if (this._stream == undefined) {
-            this._stream = YouTube_1.default.getDataStream(this.youtubeId);
+        if (this._buffer instanceof stream_1.Readable) {
+            return this._buffer;
         }
-        return this._stream;
+        return YouTube_1.default.getDataStream(this.youtubeId);
     }
     buffer() {
-        const _ = this.stream;
+        this._buffer = YouTube_1.default.getDataStream(this.youtubeId);
     }
 }
 exports.default = Song;

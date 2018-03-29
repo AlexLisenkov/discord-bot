@@ -9,7 +9,7 @@ export default class Song
     public snippet:any = {};
     public author:User;
     public begin:string = '00:00:00.000';
-    private _stream:Readable;
+    private _buffer:Readable;
 
     /**
      * Construct a new Song
@@ -46,13 +46,13 @@ export default class Song
      * @return {Readable}
      */
     get stream():Readable {
-        if( this._stream == undefined ) {
-            this._stream = YouTube.getDataStream(this.youtubeId);
+        if( this._buffer instanceof Readable){
+            return this._buffer;
         }
-        return this._stream;
+        return YouTube.getDataStream(this.youtubeId);
     }
 
     public buffer():void {
-        const _ = this.stream;
+        this._buffer = YouTube.getDataStream(this.youtubeId);
     }
 }
