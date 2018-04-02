@@ -103,14 +103,16 @@ class VoiceConnection {
                     this.database.statistics.memberStatistics(member.id).incrementTotalSongsListened();
             });
         }
+        this.triggered = true;
         this.dispatcher.once('end', () => {
             let timeout = setTimeout(() => {
+                clearTimeout(timeout);
                 this.currentSong = null;
                 this.triggered = false;
+                this.dispatcher = undefined;
                 if (this.queue.length > 0) {
                     this.play();
                 }
-                clearTimeout(timeout);
                 if (Config_1.default.environment == 'production') {
                     const totalTime = (new Date() - this.timer) / 1000;
                     this.statistic_totalPlaying.decrement();
@@ -126,7 +128,6 @@ class VoiceConnection {
                 }
             }, 1000);
         });
-        this.triggered = true;
         this.dispatcher.on('error', console.error);
     }
     setVolume(volume) {
@@ -153,7 +154,7 @@ class VoiceConnection {
         if (this.dispatcher.paused)
             this.resume();
         this.triggered = false;
-        this.dispatcher.end();
+        this.dispatcher.emit('end');
     }
     removeIndex(index) {
         if (this.queue[index] !== undefined) {

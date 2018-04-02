@@ -135,14 +135,16 @@ export default class VoiceConnection
             });
         }
 
+        this.triggered = true;
         this.dispatcher.once('end', () => {
             let timeout = setTimeout(() => {
+                clearTimeout(timeout);
                 this.currentSong = null;
                 this.triggered = false;
+                this.dispatcher = undefined;
                 if (this.queue.length > 0 ) {
                     this.play();
                 }
-                clearTimeout(timeout);
                 if( Config.environment == 'production') {
                     const totalTime = (<any>new Date() - <any>this.timer) / 1000;
                     this.statistic_totalPlaying.decrement();
@@ -158,7 +160,6 @@ export default class VoiceConnection
                 }
             }, 1000);
         });
-        this.triggered = true;
         this.dispatcher.on('error', console.error );
     }
 
@@ -191,7 +192,7 @@ export default class VoiceConnection
         if( this.dispatcher.paused )
             this.resume();
         this.triggered = false;
-        this.dispatcher.end();
+        this.dispatcher.emit('end');
     }
 
     removeIndex(index:number):boolean {
