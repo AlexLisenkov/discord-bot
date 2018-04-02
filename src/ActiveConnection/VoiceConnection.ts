@@ -81,8 +81,10 @@ export default class VoiceConnection
             });
         }
 
-        if( !this.voiceChannel.connection )
-            this.voiceChannel.join();
+        if( !this.voiceChannel.connection ){
+            this.voiceChannel.join().then(this.play);
+            return;
+        }
 
         const song = this.queue.shift();
         this.bufferNextSongStream();
@@ -148,10 +150,12 @@ export default class VoiceConnection
                     this.statistics_totalSeconds.incrementWith(totalTime);
                     this.database.totalSeconds.incrementWith(totalTime);
                     this.database.statistics.memberStatistics(author_id).incrementTotalSecondsWith(totalTime);
-                    this.voiceChannel.members.forEach(member => {
-                        if (!member.deaf && !member.user.bot)
-                            this.database.statistics.memberStatistics(member.id).incrementTotalSecondsListenedWith(totalTime);
-                    });
+                    if( this.voiceChannel ) {
+                        this.voiceChannel.members.forEach(member => {
+                            if (!member.deaf && !member.user.bot)
+                                this.database.statistics.memberStatistics(member.id).incrementTotalSecondsListenedWith(totalTime);
+                        });
+                    }
                 }
             }, 1000);
         });
