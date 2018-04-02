@@ -70,6 +70,11 @@ export default class VoiceConnection
     }
 
     play():any {
+        if( this.triggered ){
+            console.error('Play triggered whilst playing');
+            return false;
+        }
+
         if( this.queue.length <= 0 ) {
             return this.channel.send('Queue empty').then( (msg: Message) => {
                 msg.delete(Config.message_lifetime);
@@ -110,7 +115,11 @@ export default class VoiceConnection
             this.timer = new Date();
         } catch (error) {
             console.error(error.message);
+            return this.channel.send(`Something went wrong, if you see this message please report this at https://pleyr.net/support.\nError message: "${error.message}"`);
         }
+
+        if( !this.timer || !this.dispatcher )
+            return false;
 
         this.currentSong = song;
         const author_id = this.currentSong.author.id;
@@ -125,26 +134,24 @@ export default class VoiceConnection
             });
         }
 
-        this.dispatcher.on('end', () => {
+        this.dispatcher.once('end', () => {
             let timeout = setTimeout(() => {
                 this.currentSong = null;
-                if( Config.environment == 'production'){
-                    const totalTime = (<any>new Date() - <any>this.timer )/ 1000;
+                this.triggered = false;
+                if (this.queue.length > 0 ) {
+                    this.play();
+                }
+                clearTimeout(timeout);
+                if( Config.environment == 'production') {
+                    const totalTime = (<any>new Date() - <any>this.timer) / 1000;
                     this.statistic_totalPlaying.decrement();
                     this.statistics_totalSeconds.incrementWith(totalTime);
                     this.database.totalSeconds.incrementWith(totalTime);
                     this.database.statistics.memberStatistics(author_id).incrementTotalSecondsWith(totalTime);
-                    this.voiceChannel.members.forEach( member => {
-                        if( !member.deaf && !member.user.bot)
+                    this.voiceChannel.members.forEach(member => {
+                        if (!member.deaf && !member.user.bot)
                             this.database.statistics.memberStatistics(member.id).incrementTotalSecondsListenedWith(totalTime);
                     });
-                }
-
-                if (this.queue.length > 0) {
-                    this.play();
-                } else {
-                    this.triggered = false;
-                    clearTimeout(timeout);
                 }
             }, 1000);
         });

@@ -36,7 +36,13 @@ Client.instance;
 process.on('uncaughtException', (err) => {
     if( HTTPServer.server )
         HTTPServer.server.close();
-    console.error(err);
+    console.log(err);
+});
+
+process.on('unhandledRejection', (err) => {
+    if( HTTPServer.server )
+        HTTPServer.server.close();
+    console.log('unhandledRejection', err.message);
 });
 
 // Register commands

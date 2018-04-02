@@ -30,6 +30,7 @@
     "firebase": "^4.11.0",
     "gulp": "^4.0.0",
     "opusscript": "0.0.6",
+    "prism-media": "github:hydrabolt/prism-media",
     "snyk": "^1.70.2",
     "ytdl-core": "^0.20.2"
   },

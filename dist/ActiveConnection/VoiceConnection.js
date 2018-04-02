@@ -49,6 +49,10 @@ class VoiceConnection {
         this.disconnectWhenChannelIsEmpty();
     }
     play() {
+        if (this.triggered) {
+            console.error('Play triggered whilst playing');
+            return false;
+        }
         if (this.queue.length <= 0) {
             return this.channel.send('Queue empty').then((msg) => {
                 msg.delete(Config_1.default.message_lifetime);
@@ -82,7 +86,10 @@ class VoiceConnection {
         }
         catch (error) {
             console.error(error.message);
+            return this.channel.send(`Something went wrong, if you see this message please report this at https://pleyr.net/support.\nError message: "${error.message}"`);
         }
+        if (!this.timer || !this.dispatcher)
+            return false;
         this.currentSong = song;
         const author_id = this.currentSong.author.id;
         if (Config_1.default.environment == 'production') {
@@ -95,9 +102,14 @@ class VoiceConnection {
                     this.database.statistics.memberStatistics(member.id).incrementTotalSongsListened();
             });
         }
-        this.dispatcher.on('end', () => {
+        this.dispatcher.once('end', () => {
             let timeout = setTimeout(() => {
                 this.currentSong = null;
+                this.triggered = false;
+                if (this.queue.length > 0) {
+                    this.play();
+                }
+                clearTimeout(timeout);
                 if (Config_1.default.environment == 'production') {
                     const totalTime = (new Date() - this.timer) / 1000;
                     this.statistic_totalPlaying.decrement();
@@ -108,13 +120,6 @@ class VoiceConnection {
                         if (!member.deaf && !member.user.bot)
                             this.database.statistics.memberStatistics(member.id).incrementTotalSecondsListenedWith(totalTime);
                     });
-                }
-                if (this.queue.length > 0) {
-                    this.play();
-                }
-                else {
-                    this.triggered = false;
-                    clearTimeout(timeout);
                 }
             }, 1000);
         });

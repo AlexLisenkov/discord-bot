@@ -36,7 +36,12 @@ Client_1.default.instance;
 process.on('uncaughtException', (err) => {
     if (HTTPServer_1.default.server)
         HTTPServer_1.default.server.close();
-    console.error(err);
+    console.log(err);
+});
+process.on('unhandledRejection', (err) => {
+    if (HTTPServer_1.default.server)
+        HTTPServer_1.default.server.close();
+    console.log('unhandledRejection', err.message);
 });
 // Register commands
 new PlayCommand_1.default();

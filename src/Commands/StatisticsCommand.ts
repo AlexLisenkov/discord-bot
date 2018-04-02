@@ -23,9 +23,8 @@ export default class StatisticsCommand extends Command
                 if( !created_at )
                     created_at = new Date().getTime() / 1000;
                 const alive_time = new Date().getTime() / 1000;
-                console.log(created_at, alive_time)
                 embed.addField('Server', 'Playtime:\nSongs played:\nHere for:', true);
-                embed.addField('\u200B', `${this.convertSeconds(guild_statistics.total_seconds)}\n${guild_statistics.total_songs}\n${this.convertSeconds(created_at-alive_time)}`, true)
+                embed.addField('\u200B', `${this.convertSeconds(guild_statistics.total_seconds)}\n${guild_statistics.total_songs}\n${this.convertSeconds(alive_time-created_at)}`, true)
                 embed.addBlankField(true);
                 if( Client.dbl ){
                     Client.dbl.hasVoted(message.author.id).then( res => {
