@@ -82,9 +82,8 @@ class VoiceConnection {
             msg.delete(Config_1.default.message_lifetime);
         });
         try {
-            this.voiceChannel.connection.playStream(song.stream, YoutubeConfig_1.default.default_stream_options);
+            this.dispatcher = this.voiceChannel.connection.playStream(song.stream, YoutubeConfig_1.default.default_stream_options);
             this.timer = new Date();
-            this.dispatcher = this.voiceChannel.connection.player.dispatcher;
         }
         catch (error) {
             console.error(error.message);

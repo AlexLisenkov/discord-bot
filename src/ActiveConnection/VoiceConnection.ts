@@ -109,12 +109,11 @@ export default class VoiceConnection
             msg.delete(Config.message_lifetime);
         });
         try {
-           this.voiceChannel.connection.playStream(
+            this.dispatcher = this.voiceChannel.connection.playStream(
                 song.stream,
                 YoutubeConfig.default_stream_options
             );
             this.timer = new Date();
-            this.dispatcher = this.voiceChannel.connection.player.dispatcher;
         } catch (error) {
             console.error(error.message);
             return this.channel.send(`Something went wrong, if you see this message please report this at https://pleyr.net/support.\nError message: "${error.message}"`);
