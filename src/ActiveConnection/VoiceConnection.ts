@@ -114,6 +114,7 @@ export default class VoiceConnection
                 YoutubeConfig.default_stream_options
             );
             this.timer = new Date();
+            this.dispatcher.on('error', console.error );
         } catch (error) {
             console.error(error.message);
             return this.channel.send(`Something went wrong, if you see this message please report this at https://pleyr.net/support.\nError message: "${error.message}"`);
@@ -141,7 +142,6 @@ export default class VoiceConnection
                 clearTimeout(timeout);
                 this.currentSong = null;
                 this.triggered = false;
-                this.dispatcher = undefined;
                 if (this.queue.length > 0 ) {
                     this.play();
                 }
@@ -160,7 +160,6 @@ export default class VoiceConnection
                 }
             }, 1000);
         });
-        this.dispatcher.on('error', console.error );
     }
 
     setVolume( volume:number ):void {
@@ -189,10 +188,10 @@ export default class VoiceConnection
     }
 
     skip():void {
-        if( this.dispatcher.paused )
+        if( this.dispatcher && this.dispatcher.paused )
             this.resume();
         this.triggered = false;
-        this.dispatcher.emit('end');
+        this.dispatcher.end();
     }
 
     removeIndex(index:number):boolean {

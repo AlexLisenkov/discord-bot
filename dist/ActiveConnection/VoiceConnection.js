@@ -84,6 +84,7 @@ class VoiceConnection {
         try {
             this.dispatcher = this.voiceChannel.connection.playStream(song.stream, YoutubeConfig_1.default.default_stream_options);
             this.timer = new Date();
+            this.dispatcher.on('error', console.error);
         }
         catch (error) {
             console.error(error.message);
@@ -109,7 +110,6 @@ class VoiceConnection {
                 clearTimeout(timeout);
                 this.currentSong = null;
                 this.triggered = false;
-                this.dispatcher = undefined;
                 if (this.queue.length > 0) {
                     this.play();
                 }
@@ -128,7 +128,6 @@ class VoiceConnection {
                 }
             }, 1000);
         });
-        this.dispatcher.on('error', console.error);
     }
     setVolume(volume) {
         if (this.dispatcher)
@@ -151,10 +150,10 @@ class VoiceConnection {
         return true;
     }
     skip() {
-        if (this.dispatcher.paused)
+        if (this.dispatcher && this.dispatcher.paused)
             this.resume();
         this.triggered = false;
-        this.dispatcher.emit('end');
+        this.dispatcher.end();
     }
     removeIndex(index) {
         if (this.queue[index] !== undefined) {
