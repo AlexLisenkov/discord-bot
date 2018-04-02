@@ -176,7 +176,7 @@ class VoiceConnection {
     disconnect() {
         this.truncate();
         if (this.voiceChannel !== undefined && this.voiceChannel.connection !== undefined) {
-            this.voiceChannel.connection.disconnect();
+            this.voiceChannel.leave();
             this.voiceChannel = undefined;
         }
     }
