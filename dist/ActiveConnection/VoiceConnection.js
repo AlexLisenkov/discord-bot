@@ -46,7 +46,7 @@ class VoiceConnection {
                 collect.set(x, value.val()[x]);
             this.disallowedVoiceChannels = collect;
         });
-        this.disconnectWhenChannelIsEmpty();
+        //this.disconnectWhenChannelIsEmpty();
     }
     play() {
         if (this.triggered) {
@@ -176,7 +176,6 @@ class VoiceConnection {
     disconnect() {
         this.truncate();
         if (this.voiceChannel !== undefined && this.voiceChannel.connection !== undefined) {
-            this.voiceChannel.leave();
             this.voiceChannel = undefined;
         }
     }

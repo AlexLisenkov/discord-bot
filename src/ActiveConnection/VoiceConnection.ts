@@ -66,7 +66,7 @@ export default class VoiceConnection
             this.disallowedVoiceChannels = collect;
         });
 
-        this.disconnectWhenChannelIsEmpty();
+        //this.disconnectWhenChannelIsEmpty();
     }
 
     play():any {
@@ -218,7 +218,6 @@ export default class VoiceConnection
     disconnect():void {
         this.truncate();
         if( this.voiceChannel !== undefined && this.voiceChannel.connection !== undefined ) {
-            this.voiceChannel.leave();
             this.voiceChannel = undefined;
         }
     }
