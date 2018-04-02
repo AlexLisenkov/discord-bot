@@ -59,8 +59,7 @@ class VoiceConnection {
             });
         }
         if (!this.voiceChannel.connection) {
-            this.voiceChannel.join().then(this.play);
-            return;
+            this.voiceChannel.join();
         }
         const song = this.queue.shift();
         this.bufferNextSongStream();
