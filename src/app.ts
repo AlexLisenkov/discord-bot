@@ -42,7 +42,7 @@ process.on('uncaughtException', (err) => {
 process.on('unhandledRejection', (err) => {
     if( HTTPServer.server )
         HTTPServer.server.close();
-    console.log('unhandledRejection', err.message);
+    console.error(err);
 });
 
 // Register commands
