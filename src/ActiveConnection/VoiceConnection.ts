@@ -34,7 +34,7 @@ export default class VoiceConnection
     public statistics_totalSongs:Statistics_TotalSongs = new Statistics_TotalSongs();
     public statistic_totalPlaying:Statistics_TotalPlaying = new Statistics_TotalPlaying();
     public disallowedVoiceChannels:Collection<string, string>;
-    protected disconnectAfter:number = 1000*60*4;
+    protected disconnectAfter:number = 1000*90;
 
     constructor( guild:DiscordGuild ) {
         this.database = new Guild(guild.id);
@@ -65,8 +65,7 @@ export default class VoiceConnection
                 collect.set(x, value.val()[x]);
             this.disallowedVoiceChannels = collect;
         });
-
-        //this.disconnectWhenChannelIsEmpty();
+        this.setDisconnectTimer();
     }
 
     play():any {
@@ -139,7 +138,6 @@ export default class VoiceConnection
         this.triggered = true;
         this.dispatcher.once('end', () => {
             let timeout = setTimeout(() => {
-                clearTimeout(timeout);
                 this.currentSong = null;
                 this.triggered = false;
                 if (this.queue.length > 0 ) {
@@ -158,6 +156,8 @@ export default class VoiceConnection
                         });
                     }
                 }
+                this.setDisconnectTimer();
+                clearTimeout(timeout);
             }, 1000);
         });
     }
@@ -221,7 +221,17 @@ export default class VoiceConnection
     disconnect():void {
         this.truncate();
         if( this.voiceChannel !== undefined && this.voiceChannel.connection !== undefined ) {
+            this.voiceChannel.leave();
             this.voiceChannel = undefined;
+        }
+    }
+
+    setDisconnectTimer():void {
+        if( this.timeToDisconnect() ) {
+            let timeout = setTimeout(() => {
+                clearTimeout(timeout);
+                this.disconnectWhenChannelIsEmpty();
+            }, this.disconnectAfter);
         }
     }
 
@@ -262,13 +272,9 @@ export default class VoiceConnection
     }
 
     disconnectWhenChannelIsEmpty():void {
-        setTimeout( () => {
-            if( !this.timeToDisconnect() )
-                return this.disconnectWhenChannelIsEmpty();
-
-            this.disconnect();
-            return this.disconnectWhenChannelIsEmpty();
-        }, this.disconnectAfter);
+        if( this.timeToDisconnect() ) {
+            return this.disconnect()
+        }
     }
 
     timeToDisconnect():boolean {

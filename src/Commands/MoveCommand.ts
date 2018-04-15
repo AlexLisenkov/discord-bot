@@ -8,6 +8,12 @@ export default class MoveCommand extends Command
     command: string = "move";
 
     handle(parameter: string, message: Message, connection: VoiceConnection): void {
+        if( connection.queue.length == 0 ){
+            message.reply('There is no queue').then((msg: Message) => {
+                msg.delete(Config.message_lifetime);
+            });
+            return null;
+        }
         const indexes = parameter.split(' ');
         if( indexes.length != 2 ){
             message.reply('This commands requires two parameters').then((msg: Message) => {

@@ -8,6 +8,12 @@ class MoveCommand extends Command_1.default {
         this.command = "move";
     }
     handle(parameter, message, connection) {
+        if (connection.queue.length == 0) {
+            message.reply('There is no queue').then((msg) => {
+                msg.delete(Config_1.default.message_lifetime);
+            });
+            return null;
+        }
         const indexes = parameter.split(' ');
         if (indexes.length != 2) {
             message.reply('This commands requires two parameters').then((msg) => {

@@ -84,6 +84,7 @@ class Command {
         else {
             connection.voiceChannel = message.member.voiceChannel;
             connection.voiceChannel.join();
+            connection.setDisconnectTimer();
             return true;
         }
     }

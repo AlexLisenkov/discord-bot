@@ -18,7 +18,7 @@ class VoiceConnection {
         this.statistics_totalSeconds = new Statistics_TotalSeconds_1.default();
         this.statistics_totalSongs = new Statistics_TotalSongs_1.default();
         this.statistic_totalPlaying = new Statistics_TotalPlaying_1.default();
-        this.disconnectAfter = 1000 * 60 * 4;
+        this.disconnectAfter = 1000 * 90;
         this.database = new Guild_1.default(guild.id);
         this.channel = Client_1.default.getMessageableTextChannel(guild);
         this.database.guildConfig.setKey('prefix').data.on('value', value => {
@@ -46,7 +46,7 @@ class VoiceConnection {
                 collect.set(x, value.val()[x]);
             this.disallowedVoiceChannels = collect;
         });
-        //this.disconnectWhenChannelIsEmpty();
+        this.setDisconnectTimer();
     }
     play() {
         if (this.triggered) {
@@ -107,7 +107,6 @@ class VoiceConnection {
         this.triggered = true;
         this.dispatcher.once('end', () => {
             let timeout = setTimeout(() => {
-                clearTimeout(timeout);
                 this.currentSong = null;
                 this.triggered = false;
                 if (this.queue.length > 0) {
@@ -126,6 +125,8 @@ class VoiceConnection {
                         });
                     }
                 }
+                this.setDisconnectTimer();
+                clearTimeout(timeout);
             }, 1000);
         });
     }
@@ -179,7 +180,16 @@ class VoiceConnection {
     disconnect() {
         this.truncate();
         if (this.voiceChannel !== undefined && this.voiceChannel.connection !== undefined) {
+            this.voiceChannel.leave();
             this.voiceChannel = undefined;
+        }
+    }
+    setDisconnectTimer() {
+        if (this.timeToDisconnect()) {
+            let timeout = setTimeout(() => {
+                clearTimeout(timeout);
+                this.disconnectWhenChannelIsEmpty();
+            }, this.disconnectAfter);
         }
     }
     truncate() {
@@ -214,12 +224,9 @@ class VoiceConnection {
         return true;
     }
     disconnectWhenChannelIsEmpty() {
-        setTimeout(() => {
-            if (!this.timeToDisconnect())
-                return this.disconnectWhenChannelIsEmpty();
-            this.disconnect();
-            return this.disconnectWhenChannelIsEmpty();
-        }, this.disconnectAfter);
+        if (this.timeToDisconnect()) {
+            return this.disconnect();
+        }
     }
     timeToDisconnect() {
         return !(!this.voiceChannel || !this.voiceChannel.connection || (this.voiceChannel.members.size > 1 && this.triggered));
