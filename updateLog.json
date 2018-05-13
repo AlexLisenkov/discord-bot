@@ -1,15 +1,23 @@
 {
-  "url": "https://pleyr.net",
-  "color": 4380128,
-  "author": {
-    "name": "What's new?",
-    "url": "https://pleyr.net"
-  },
-  "description": "Version 0.4.5",
-  "fields": [
-    {
-      "name": "Stability update",
-      "value": "`Statistics` command showed incorrect time.\nChanged to opusscript\nAdded missing command to help\nRemove command with single index bugfix"
-    }
-  ]
+    "url": "https://pleyr.net",
+    "color": 4380128,
+    "author": {
+      "name": "What's new?",
+      "url": "https://pleyr.net"
+    },
+    "description": "Version 0.5",
+    "fields": [
+      {
+        "name": "Play and playlists",
+        "value": "The play command does not look up playlists anymore, it will strictly filter on single video's within the music category now.\nPlaylist can be found using the 'list' command. See >>help for more information."
+      },
+      {
+        "name": "Silent mode",
+        "value": "Disable the bot's spamming with the 'conf silent' command, see >>adminhelp for more information."
+      },
+      {
+        "name": "New searching algorithm",
+        "value": "The (force)play command will lookup video's under the Music category, this way you wont get a WatchMojo video when searching for something. The downside of this is that you may actually want to listen to a WatchMojo video; to watch a video that doenst show up you should copy and pase the YouTube url.\nAgain, if you want to search for playlists you have to use the dedicated 'list' command."
+      }
+    ]
 }
