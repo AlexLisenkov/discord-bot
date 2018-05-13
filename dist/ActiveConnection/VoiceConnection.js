@@ -14,16 +14,22 @@ class VoiceConnection {
         this.queue = [];
         this.triggered = false;
         this.isMuted = false;
+        this.silentMode = false;
         this.prefix = Config_1.default.prefix;
         this.statistics_totalSeconds = new Statistics_TotalSeconds_1.default();
         this.statistics_totalSongs = new Statistics_TotalSongs_1.default();
         this.statistic_totalPlaying = new Statistics_TotalPlaying_1.default();
-        this.disconnectAfter = 1000 * 90;
+        this.disconnectAfter = 1000 * 120;
         this.database = new Guild_1.default(guild.id);
         this.channel = Client_1.default.getMessageableTextChannel(guild);
         this.database.guildConfig.setKey('prefix').data.on('value', value => {
             if (value.val())
                 this.prefix = value.val();
+        });
+        this.database.guildConfig.setKey('silent').data.on('value', value => {
+            if (value.val() != null) {
+                this.silentMode = value.val();
+            }
         });
         this.database.djRole.data.on('value', value => {
             this.djRole = value.val();
@@ -78,9 +84,11 @@ class VoiceConnection {
                 'text': `Added by ${song.author.username}`
             }
         };
-        this.channel.send('', { embed: embed }).then((msg) => {
-            msg.delete(Config_1.default.message_lifetime);
-        });
+        if (!this.silentMode) {
+            this.channel.send('', { embed: embed }).then((msg) => {
+                msg.delete(Config_1.default.message_lifetime);
+            });
+        }
         try {
             this.dispatcher = this.voiceChannel.connection.playStream(song.stream, YoutubeConfig_1.default.default_stream_options);
             this.timer = new Date();

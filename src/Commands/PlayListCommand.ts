@@ -6,13 +6,13 @@ import {Message} from "discord.js";
 import Config from "../Config/Config";
 import SearchTypeEnum from '../YouTube/SearchTypeEnum';
 
-export default class PlayCommand extends Command
+export default class PlayListCommand extends Command
 {
-    command: string = "play";
+    command: string = "list";
     requiresVoiceChannel: boolean = true;
 
     handle(parameter: string, message: Message, connection: VoiceConnection): void {
-        YouTube.search(parameter, SearchTypeEnum.Video).then((result:any) => {
+        YouTube.search(parameter, SearchTypeEnum.Playlist).then((result:any) => {
             if( result instanceof Song ){
                 result.author = message.author;
                 connection.pushToQueue(result);
@@ -60,11 +60,11 @@ export default class PlayCommand extends Command
                         (
                             !user.bot &&
                             !hasReacted &&
-                            (reaction.emoji.name == '✅' ||
-                            reaction.emoji.name == '🔀' )
+                            (reaction.emoji.name === '✅' ||
+                            reaction.emoji.name === '🔀' )
                         ) &&
                         (
-                            user.id == message.author.id ||
+                            user.id === message.author.id ||
                             user.permissions.has('ADMINISTRATOR') ||
                             user.roles.exists('id', connection.djRole)
                         )

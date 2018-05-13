@@ -16,7 +16,8 @@ export default abstract class Command
             this.message = message;
             connect.then( (connection:VoiceConnection) => {
                 if( !message.content.startsWith(`${connection.prefix}${this.command}`) &&
-                    !( message.content.startsWith(`${Config.prefix}help`) && this.command == 'help' ))
+                    !( message.content.startsWith(`${Config.prefix}help`) && this.command == 'help' ) &&
+                    !( message.content.startsWith(`${Config.prefix}adminhelp`) && this.command == 'adminhelp' ))
                     return;
 
                 connection.channel = <TextChannel>message.channel;

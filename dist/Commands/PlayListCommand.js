@@ -5,14 +5,14 @@ const YouTube_1 = require("../YouTube/YouTube");
 const Song_1 = require("../YouTube/Song");
 const Config_1 = require("../Config/Config");
 const SearchTypeEnum_1 = require("../YouTube/SearchTypeEnum");
-class PlayCommand extends Command_1.default {
+class PlayListCommand extends Command_1.default {
     constructor() {
         super(...arguments);
-        this.command = "play";
+        this.command = "list";
         this.requiresVoiceChannel = true;
     }
     handle(parameter, message, connection) {
-        YouTube_1.default.search(parameter, SearchTypeEnum_1.default.Video).then((result) => {
+        YouTube_1.default.search(parameter, SearchTypeEnum_1.default.Playlist).then((result) => {
             if (result instanceof Song_1.default) {
                 result.author = message.author;
                 connection.pushToQueue(result);
@@ -50,9 +50,9 @@ class PlayCommand extends Command_1.default {
                     });
                     const filter = (reaction, user) => ((!user.bot &&
                         !hasReacted &&
-                        (reaction.emoji.name == '✅' ||
-                            reaction.emoji.name == '🔀')) &&
-                        (user.id == message.author.id ||
+                        (reaction.emoji.name === '✅' ||
+                            reaction.emoji.name === '🔀')) &&
+                        (user.id === message.author.id ||
                             user.permissions.has('ADMINISTRATOR') ||
                             user.roles.exists('id', connection.djRole)));
                     const reactionCollector = msg.createReactionCollector(filter);
@@ -77,5 +77,5 @@ class PlayCommand extends Command_1.default {
         });
     }
 }
-exports.default = PlayCommand;
-//# sourceMappingURL=PlayCommand.js.map
+exports.default = PlayListCommand;
+//# sourceMappingURL=PlayListCommand.js.map

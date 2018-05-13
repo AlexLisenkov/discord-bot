@@ -4,6 +4,7 @@ const Command_1 = require("./Command");
 const YouTube_1 = require("../YouTube/YouTube");
 const Song_1 = require("../YouTube/Song");
 const Config_1 = require("../Config/Config");
+const SearchTypeEnum_1 = require("../YouTube/SearchTypeEnum");
 class ForcePlayCommand extends Command_1.default {
     constructor() {
         super(...arguments);
@@ -11,7 +12,7 @@ class ForcePlayCommand extends Command_1.default {
         this.requiresVoiceChannel = true;
     }
     handle(parameter, message, connection) {
-        YouTube_1.default.search(parameter).then((result) => {
+        YouTube_1.default.search(parameter, SearchTypeEnum_1.default.Video).then((result) => {
             if (result instanceof Song_1.default) {
                 result.author = message.author;
                 connection.queue.unshift(result);

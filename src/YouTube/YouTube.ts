@@ -3,6 +3,7 @@ import Song from "./Song";
 import axios from "axios";
 import * as ytdl from 'ytdl-core';
 import {Readable} from "stream";
+import SearchTypeEnum from './SearchTypeEnum';
 
 export default class YouTube
 {
@@ -20,8 +21,26 @@ export default class YouTube
      *
      * @return {string}
      */
-    static get API_URL() {
-        return `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video,playlist&maxResults=1&key=${YoutubeConfig.API_KEY}`;
+    static get SEARCH_API_URL() {
+        return `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=1&videoCategoryId=10&key=${YoutubeConfig.API_KEY}`;
+    }
+
+    /**
+     * Get the YouTube search API uri
+     *
+     * @return {string}
+     */
+    static get SEARCH_PLAYLIST_API_URL() {
+        return `https://www.googleapis.com/youtube/v3/search?part=snippet&type=playlist&maxResults=1&key=${YoutubeConfig.API_KEY}`;
+    }
+
+    /**
+     * Get the YouTube search API uri
+     *
+     * @return {string}
+     */
+    static get VIDEO_API_URL() {
+        return `https://www.googleapis.com/youtube/v3/videos?part=snippet&key=${YoutubeConfig.API_KEY}`;
     }
 
     /**
@@ -30,7 +49,7 @@ export default class YouTube
      * @return {string}
      */
     static get SONG_INFO_URL() {
-        return `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&key=${YoutubeConfig.API_KEY}`;
+        return `https://www.googleapis.com/youtube/v3/videos?part=snippet&key=${YoutubeConfig.API_KEY}`;
     }
 
     /**
@@ -53,13 +72,49 @@ export default class YouTube
     }
 
     /**
+     * Get regex to test youtube url
+     *
+     * @return {RegExp}
+     */
+    static get isYouTubeUrlRegex(): RegExp {
+        return new RegExp("^((?:https?:)?\\/\\/)?((?:www|m)\\.)?((?:youtube\\.com|youtu.be))(\\/(?:[\\w\\-]+\\?v=|embed\\/|v\\/)?)([\\w\\-]+)(\\S+)?$");
+    }
+
+    /**
+     * Check if query string is YouTube url
+     *
+     * @param {string} query
+     * @return {boolean}
+     */
+    static isYouTubeUrl( query:string ) : boolean {
+        return YouTube.isYouTubeUrlRegex.test(query);
+    }
+
+    static getYouTubeIDFromQueryString( query:string ) : string {
+        const match = query.match(YouTube.isYouTubeUrlRegex);
+        if( match ) {
+            return match[5];
+        } else {
+            return '';
+        }
+    }
+
+    /**
      * Search for a youtube song
      *
      * @return {Promise}
      */
-    static search( query:string ) {
-        const query_url = `${YouTube.API_URL}&q=${query}`;
-
+    static search( query:string, type:SearchTypeEnum ) {
+        let query_url = '';
+        if( YouTube.isYouTubeUrl(query) ){
+            query_url = `${YouTube.VIDEO_API_URL}&id=${this.getYouTubeIDFromQueryString(query)}`;
+        } else if( type === SearchTypeEnum.Video ) {
+            query_url = `${YouTube.SEARCH_API_URL}&q=${query}`;
+        } else if( type === SearchTypeEnum.Playlist ) {
+            query_url = `${YouTube.SEARCH_PLAYLIST_API_URL}&q=${query}`;
+        } else {
+            throw Error(`Cannot make query url for ${query} and ${type}`);
+        }
         return new Promise( (then, reject) => {
             axios.get(query_url)
                 .then( response => {
@@ -70,11 +125,17 @@ export default class YouTube
                     if(item.snippet.liveBroadcastContent === 'live')
                         return reject('❌ I\'m sorry, I can\'t broadcast live streams');
 
-                    if( item.id.kind === 'youtube#video' )
+                    if(response.data.kind === 'youtube#videoListResponse'){
+                        item.id = {
+                            kind: item.kind,
+                            videoId: item.id,
+                        };
+                    }
+                    if( item.id.kind === 'youtube#video' ) {
                         return then(
                             new Song(item)
                         );
-
+                    }
 
                     const url = `${YouTube.PLAYLIST_URL}&playlistId=${item.id.playlistId}`;
                     return axios.get(url)

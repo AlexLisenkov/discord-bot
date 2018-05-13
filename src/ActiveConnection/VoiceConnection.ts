@@ -27,6 +27,7 @@ export default class VoiceConnection
     public isMuted:boolean = false;
     public database:Guild;
     public djRole:string;
+    public silentMode:boolean = false;
     public prefix:string = Config.prefix;
     public djCommands:Collection<string, string>;
     public blacklist:Collection<string, string>;
@@ -34,7 +35,7 @@ export default class VoiceConnection
     public statistics_totalSongs:Statistics_TotalSongs = new Statistics_TotalSongs();
     public statistic_totalPlaying:Statistics_TotalPlaying = new Statistics_TotalPlaying();
     public disallowedVoiceChannels:Collection<string, string>;
-    protected disconnectAfter:number = 1000*90;
+    protected disconnectAfter:number = 1000*120;
 
     constructor( guild:DiscordGuild ) {
         this.database = new Guild(guild.id);
@@ -43,6 +44,11 @@ export default class VoiceConnection
         this.database.guildConfig.setKey('prefix').data.on('value', value => {
             if( value.val() )
                 this.prefix = value.val();
+        });
+        this.database.guildConfig.setKey('silent').data.on('value', value => {
+            if( value.val() != null ) {
+                this.silentMode = value.val();
+            }
         });
         this.database.djRole.data.on('value', value => {
             this.djRole = value.val();
@@ -104,9 +110,11 @@ export default class VoiceConnection
                 }
             };
 
-        this.channel.send('', {embed: embed}).then( (msg: Message) => {
-            msg.delete(Config.message_lifetime);
-        });
+        if( !this.silentMode ) {
+            this.channel.send('', {embed: embed}).then((msg: Message) => {
+                msg.delete(Config.message_lifetime);
+            });
+        }
         try {
             this.dispatcher = this.voiceChannel.connection.playStream(
                 song.stream,

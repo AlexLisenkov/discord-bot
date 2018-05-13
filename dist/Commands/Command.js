@@ -14,7 +14,8 @@ class Command {
             this.message = message;
             connect.then((connection) => {
                 if (!message.content.startsWith(`${connection.prefix}${this.command}`) &&
-                    !(message.content.startsWith(`${Config_1.default.prefix}help`) && this.command == 'help'))
+                    !(message.content.startsWith(`${Config_1.default.prefix}help`) && this.command == 'help') &&
+                    !(message.content.startsWith(`${Config_1.default.prefix}adminhelp`) && this.command == 'adminhelp'))
                     return;
                 connection.channel = message.channel;
                 this.connection = connection;

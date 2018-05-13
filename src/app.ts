@@ -28,6 +28,9 @@ import ForcePlayCommand from "./Commands/ForcePlayCommand";
 import ShuffleCommand from "./Commands/ShuffleCommand";
 import MoveCommand from "./Commands/MoveCommand";
 import StatisticsCommand from "./Commands/StatisticsCommand";
+import PlayListCommand from "./Commands/PlayListCommand";
+import SetSilentModeCommand from "./Commands/SetSilentModeCommand";
+import AdminHelpCommand from "./Commands/AdminHelpCommand";
 
 // Create instance
 Client.instance;
@@ -46,11 +49,13 @@ process.on('unhandledRejection', (err) => {
 });
 
 // Register commands
+new PlayListCommand();
 new PlayCommand();
 new ForcePlayCommand();
 new ClearQueueCommand();
 new DisconnectCommand();
 new HelpCommand();
+new AdminHelpCommand();
 new MuteCommand();
 new ShuffleCommand();
 new NowPlayingCommand();
@@ -74,6 +79,7 @@ new JoinCommand();
 new SetPrefixCommand();
 new MoveCommand();
 new StatisticsCommand();
+new SetSilentModeCommand();
 
 // HTTP server
 HTTPServer.instance;

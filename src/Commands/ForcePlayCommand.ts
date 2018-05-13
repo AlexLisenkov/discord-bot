@@ -4,6 +4,7 @@ import Song from "../YouTube/Song";
 import VoiceConnection from "../ActiveConnection/VoiceConnection";
 import {Message} from "discord.js";
 import Config from "../Config/Config";
+import SearchTypeEnum from '../YouTube/SearchTypeEnum';
 
 export default class ForcePlayCommand extends Command
 {
@@ -11,7 +12,7 @@ export default class ForcePlayCommand extends Command
     requiresVoiceChannel: boolean = true;
 
     handle(parameter: string, message: Message, connection: VoiceConnection): void {
-        YouTube.search(parameter).then((result:any) => {
+        YouTube.search(parameter, SearchTypeEnum.Video).then((result:any) => {
             if( result instanceof Song ){
                 result.author = message.author;
                 connection.queue.unshift(result);
