@@ -24,15 +24,15 @@
   "dependencies": {
     "axios": "^0.17.1",
     "bufferutil": "^3.0.3",
-    "dblapi.js": "^1.2.0",
+    "dblapi.js": "^2.0.1",
     "discord.js": "^11.3.2",
     "ffmpeg-binaries": "^3.2.2",
     "firebase": "^4.11.0",
     "gulp": "^4.0.0",
     "opusscript": "0.0.6",
     "prism-media": "github:hydrabolt/prism-media",
-    "snyk": "^1.70.2",
-    "ytdl-core": "^0.20.2"
+    "snyk": "^1.82.0",
+    "ytdl-core": "^0.20.4"
   },
   "engines": {
     "node": ">=8.9.4"

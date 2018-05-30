@@ -5,7 +5,6 @@ import VoiceConnections from "./VoiceConnections";
 import axios from "axios";
 import Statistics_TotalGuilds from "../Database/Statistics_TotalGuilds";
 import Statistics_Global from "../Database/Statistics_Global";
-import VoiceConnection from "./VoiceConnection";
 const DBL = require("dblapi.js");
 
 export default class Client

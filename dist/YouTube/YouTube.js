@@ -20,7 +20,7 @@ class YouTube {
      * @return {string}
      */
     static get SEARCH_API_URL() {
-        return `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=1&videoCategoryId=10&key=${YoutubeConfig_1.default.API_KEY}`;
+        return `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=1&key=${YoutubeConfig_1.default.API_KEY}`;
     }
     /**
      * Get the YouTube search API uri

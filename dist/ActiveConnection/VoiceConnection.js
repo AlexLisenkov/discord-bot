@@ -19,7 +19,7 @@ class VoiceConnection {
         this.statistics_totalSeconds = new Statistics_TotalSeconds_1.default();
         this.statistics_totalSongs = new Statistics_TotalSongs_1.default();
         this.statistic_totalPlaying = new Statistics_TotalPlaying_1.default();
-        this.disconnectAfter = 1000 * 120;
+        this.disconnectAfter = 300000;
         this.database = new Guild_1.default(guild.id);
         this.channel = Client_1.default.getMessageableTextChannel(guild);
         this.database.guildConfig.setKey('prefix').data.on('value', value => {

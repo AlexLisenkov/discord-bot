@@ -22,7 +22,7 @@ export default class YouTube
      * @return {string}
      */
     static get SEARCH_API_URL() {
-        return `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=1&videoCategoryId=10&key=${YoutubeConfig.API_KEY}`;
+        return `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=1&key=${YoutubeConfig.API_KEY}`;
     }
 
     /**
@@ -131,6 +131,7 @@ export default class YouTube
                             videoId: item.id,
                         };
                     }
+
                     if( item.id.kind === 'youtube#video' ) {
                         return then(
                             new Song(item)

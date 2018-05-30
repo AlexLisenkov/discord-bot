@@ -35,7 +35,7 @@ export default class VoiceConnection
     public statistics_totalSongs:Statistics_TotalSongs = new Statistics_TotalSongs();
     public statistic_totalPlaying:Statistics_TotalPlaying = new Statistics_TotalPlaying();
     public disallowedVoiceChannels:Collection<string, string>;
-    protected disconnectAfter:number = 1000*120;
+    protected disconnectAfter:number = 300000;
 
     constructor( guild:DiscordGuild ) {
         this.database = new Guild(guild.id);
