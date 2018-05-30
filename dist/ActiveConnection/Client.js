@@ -15,13 +15,8 @@ class Client {
         if (Client._instance != null)
             return Client._instance;
         Client._instance = new Discord.Client();
-        if (Config_1.default.environment != 'production' && Config_1.default.dblapi != undefined && Config_1.default.dblapi != "") {
-            this.dbl = new DBL(Config_1.default.dblapi, {
-                webhookPort: 5678,
-            }, Client._instance);
-            this.dbl.webhook.on('ready', hook => {
-                console.log(`Webhook running at http://${hook.hostname}:${hook.port}${hook.path}`);
-            });
+        if (Config_1.default.environment == 'production' && Config_1.default.dblapi != undefined && Config_1.default.dblapi != "") {
+            this.dbl = new DBL(Config_1.default.dblapi, Client._instance);
         }
         Client._instance.on('ready', () => {
             Client._instance.user.setActivity(`${Config_1.default.prefix}help for help`);
