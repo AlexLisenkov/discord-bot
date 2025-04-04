@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "axios": "^0.17.1",
-    "bufferutil": "^3.0.3",
+    "bufferutil": "^4.0.0",
     "dblapi.js": "^2.0.1",
     "discord.js": "^11.3.2",
     "ffmpeg-binaries": "^3.2.2",
