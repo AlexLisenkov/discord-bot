@@ -28,10 +28,10 @@
     "discord.js": "^11.3.2",
     "ffmpeg-binaries": "^3.2.2",
     "firebase": "^4.11.0",
-    "gulp": "^4.0.0",
+    "gulp": "^5.0.0",
     "opusscript": "0.0.6",
     "prism-media": "github:hydrabolt/prism-media",
-    "snyk": "^1.82.0",
+    "snyk": "^1.996.0",
     "ytdl-core": "^0.20.4"
   },
   "engines": {
